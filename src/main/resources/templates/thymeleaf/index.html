@@ -1,11 +1,122 @@
-<!DOCTYPE html >
-<html xmlns:th="http://www.thymeleaf.org">
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Bancário</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
-<span th:text="${user.name}"></span>
+
+    <!-- Barra lateral -->
+    <div class="sidebar">
+        <div>
+            <h3>Contas & Movimentos</h3>
+            <ul>
+                <li>Início</li>
+                <li>Contas</li>
+                <li>Transferências</li>
+                <li>Pagamentos</li>
+            </ul>
+
+            <h3>Área pessoal</h3>
+            <ul>
+                <li>O meu perfil</li>
+                <li>Definições</li>
+                <li>Terminar Sessão</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Esta parte faz com que Conta/Ultimas Transações/etc fique abaixo uma das outras -->
+    <div class="main">
+
+    <!-- Conta -->
+    <div class="box">
+      <p>Conta Pessoal • EUR</p>
+      <h1>24.075 EUR</h1>
+      <button class="button">Contas</button>
+
+      <table>
+        <tr>
+            <td><button><i class="fa-solid fa-circle-plus" style="color: #DB4848"></i>Adicionar dinheiro</button></td>
+            <td><button><i class="fa-solid fa-money-bill-transfer" style="color: #DB4848"></i>Fazer Transferências</button></td>
+            <td><button><i class="fa-solid fa-building-columns" style="color: #DB4848"></i>Todos os Dados</button></td>
+            <td><button><i class="fa-solid fa-sack-dollar" style="color: #DB4848"></i>Levantar dinheiro</button></td>
+        </tr>
+      </table>
+      <!-- <div class="actions">
+        <div>Adicionar dinheiro</div>
+        <div>Fazer Transferência</div>
+        <div>Todos os Dados</div>
+        <div>Levantar dinheiro</div>
+      </div> -->
+    </div>
+
+
+    <!-- Últimas transações -->
+     <div class="box">
+      <h3>Últimas transações</h3>
+      <ul class="transactions">
+        <li>
+          <div class="info">
+            <div class="avatar"><img src="../../static/img/img1.jpg"></div>
+            <div>
+              <b>Mulher das Notícias</b><br>
+              <small>17/04 23:09</small>
+            </div>
+          </div>
+          <span>24,78 EUR</span>
+        </li>
+
+        <hr style="border: 1px solid #ccc; margin: 20px 0;">
+
+        <li>
+          <div class="info">
+            <div class="avatar"><img src="../../static/img/img2.jpg"></div>
+            <div>
+              <b>Elon Muska</b><br>
+              <small>21/05 12:32</small>
+            </div>
+          </div>
+          <span>2924,02 EUR</span>
+        </li>
+      </ul>
+    </div>
+
+     <!-- Património e gráfico -->
+    <div class="summary">
+      <div class="box">
+        <h3>Património Total</h3>
+
+        <div class="legend">
+          <div><span class="aaa" style="background-color: orange;"></span>Poupanças e fundos</div>
+          <b>24,78 EUR</b>
+        </div>
+        
+        <div class="legend">
+          <div><span class="aaa" style="background-color: purple;"></span>Dinheiro</div>
+          <b>2924,02 EUR</b>
+        </div>
+      
+
+      <div class="legend">
+          <div><span class="aaa" style="background-color: rgb(0, 128, 11);"></span>Mealheiro Digital</div>
+          <b>3254.68 EUR</b>
+        </div>
+      </div>
+
+    <!-- Gráfico -->
+      <div class="box">
+        <h3>Despesas deste mês</h3>
+        <iframe src="../../static/grafico.html" width="100%" height="300" style="border: none;"></iframe>
+
+      </div>
+    </div>
+    </div>
 </body>
 </html>
-

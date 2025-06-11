@@ -1,0 +1,165 @@
+{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family:Tahoma, Verdana, sans-serif;
+    display: flex;
+    background-color: #e5e7eb; /* cinza claro */
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: white;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar h3 {
+    margin: 16px 0 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.sidebar ul {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.sidebar li {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.sidebar li:first-child {
+    color: red;
+    font-weight: bold;
+}
+
+.main {
+    flex: 1;
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.box {
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.box p {
+    text-align: center;
+    font-size: 15;
+}
+
+.box h1 {
+    font-size: 36px;
+    margin: 12px 0;
+    text-align: center;
+}
+
+.button {
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    /* quero alinhar o botão ao centro */
+    display: block;
+    margin: 0 auto;
+}
+
+.box table {
+    margin: 5px auto;
+    text-align: center;
+}
+
+button {
+    background-color: white;
+    border: 0;
+    padding: 35px;
+    font-size: 18px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+
+/* .actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+  text-align: center;
+}
+
+.actions div {
+  flex: 1;
+  font-size: 14px;
+}
+*/
+
+
+.transactions li {
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 0;
+    align-items: center;
+}
+
+.transactions .info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: gray;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.avatar img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.summary {
+    display: flex;
+    gap: 24px;
+}
+
+.summary .box {
+    flex: 1;
+}
+
+.legend {
+    display: flex;
+    justify-content: space-between;
+    margin: 50px 0;
+    align-items: center;
+    gap: 8px;
+}
+
+.aaa {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: middle;
+}

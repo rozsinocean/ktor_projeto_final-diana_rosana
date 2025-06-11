@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gráfico de Linha - Despesas do Mês</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: white;
+    }
+    .chart-container {
+      width: 15;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="chart-container">
+    <canvas id="linhaDespesas"></canvas>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('linhaDespesas').getContext('2d');
+    const linhaChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['1 Jun', '5 Jun', '10 Jun', '15 Jun', '20 Jun', '25 Jun', '30 Jun'],
+        datasets: [{
+          label: 'Despesas (€)',
+          data: [450, 70, 130, 30],
+          /*data: [50, 120, 90, 200, 150, 100, 250],*/
+          fill: false,
+          borderColor: 'red',
+          tension: 0.3,
+          pointBackgroundColor: 'red',
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Evolução das Despesas em Junho'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

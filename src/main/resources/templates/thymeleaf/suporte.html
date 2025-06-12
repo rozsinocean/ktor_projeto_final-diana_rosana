@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Suporte</title>
     <style>
 
         body{
@@ -13,7 +13,7 @@
         .login-container {
             max-width: 400px;
             margin: 70px auto;
-            padding: 50px;
+            padding: 60px;
             border: 1px solid white;
             background-color: white;
             border-radius: 5px;
@@ -57,11 +57,21 @@
             margin-bottom: 1px;
             font-size: 12px
         }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #D9D9D9;
+            background-color: #D9D9D9;
+            border-radius: 4px;
+            resize: vertical; /* permite redimensionar verticalmente */
+        }
+
     </style>
 </head>
 <body>
 <div class="login-container">
-    <h2>Bem vindo - Entrar</h2>
+    <h2>Contactar Suporte</h2>
     <form action="/login" method="post">
         <div class="form-group">
             <label for="email">Email</label>
@@ -69,21 +79,12 @@
         </div>
 
         <div class="form-group">
-            <label for="nif">NIF (Contribuinte)</label>
-            <input type="number" id="nif" name="nif" required>
-        </div>
-
-        <div class="form-group">
-            <label for="password">Palavra-Passe</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-
-        <div th:if="${password}" class="error-password">
-            <a href="#" onclick="recuperarSenha()" th:text="${password}" class="p-button">Esqueci-me da Palavra-passe</a>
+            <label for="problem">Descrição do problema (opcional)</label>
+            <textarea id="problem" name="problem" rows="5" required></textarea>
         </div>
 
         <br>
-        <button type="submit" class="btn-login"><b>Entrar</b></button>
+        <button type="submit" class="btn-login"><b>Enviar</b></button>
 
     </form>
 </div>

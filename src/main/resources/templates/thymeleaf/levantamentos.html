@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fazer Levantamentos</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Tahoma", "Verdana", sans-serif;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            width: 400px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .button-grid button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #e5e7eb;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .input-other {
+            width: 96%;
+            padding: 10px;
+            background-color: #e5e7eb;
+            border: none;
+            border-radius: 6px;
+            margin-bottom: 50px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-confirmar {
+            background-color: #DB4848;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-cancelar {
+            background-color: white;
+            color: black;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="modal">
+
+    <h2>Fazer levantamentos</h2>
+
+    <form action="/levantar" method="post">
+
+        <p>Selecione o montante a levantar</p>
+
+        <div class="button-grid">
+            <button type="submit" name="amount" value="50">50</button>
+            <button type="submit" name="amount" value="20">20</button>
+            <button type="submit" name="amount" value="60">60</button>
+            <button type="submit" name="amount" value="80">80</button>
+            <button type="submit" name="amount" value="100">100</button>
+            <button type="submit" name="amount" value="200">200</button>
+        </div>
+
+        <input type="text" class="input-other" name="otherAmount" placeholder="Outros montantes">
+
+        <div class="buttons">
+
+            <button type="submit" class="btn-confirmar">Confirmar</button>
+
+            <a href="/" class="btn-cancelar">Cancelar</a>
+
+        </div>
+    </form>
+
+</div>
+</body>
+</html>
+
+
+<!-- PROBLEMA: FALTA A PARTE DE CLCIAR NOS VALORES PARA FUNCIONAR -->
+<!-- tentar fazer com a página inicial atrás -->

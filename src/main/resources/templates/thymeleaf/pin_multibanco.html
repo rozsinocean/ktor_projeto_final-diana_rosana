@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pin caixa multibanco</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Tahoma", "Verdana", sans-serif;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            width: 400px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        p {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .pin-box {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .pin-box input {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .timer {
+            margin-bottom: 30px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .btn-fechar {
+            background-color: #DB4848;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="modal">
+
+    <h2>Fazer Levantamentos</h2>
+
+    <p>Se partilhar este código com alguém, essa pessoa poderá levantar o valor da sua conta. Tenha essa informação em mente.</p>
+
+    <form action="/fechar-levantamento" method="post">
+
+        <div class="pin-box">
+            <input type="text" maxlength="1" value="2" readonly>
+            <input type="text" maxlength="1" value="0" readonly>
+            <input type="text" maxlength="1" value="0" readonly>
+            <input type="text" maxlength="1" value="9" readonly>
+            <input type="text" maxlength="1" value="5" readonly>
+            <input type="text" maxlength="1" value="1" readonly>
+        </div>
+
+        <div class="timer" id="timer">Tempo restante: </div>
+
+        <button class="btn-fechar" type="submit">Fechar</button>
+
+    </form>
+</div>
+
+<script>
+
+    // Define o tempo inicial (minutos e segundos)
+    let minutes = 1;
+    let seconds = 11;
+
+    const timerElement = document.getElementById("timer");
+
+    const countdown = setInterval(() => {
+
+        if (seconds === 0) {
+            if (minutes === 0) {
+                clearInterval(countdown);
+                window.location.href = "/"; // Redireciona para a página inicial - index
+                return;
+            }
+
+            minutes--;
+            seconds = 59;
+        } else {
+            seconds--;
+        }
+
+        // Formata tempo com dois dígitos
+
+        const minText = String(minutes).padStart(2, '0');
+
+        const secText = String(seconds).padStart(2, '0');
+
+        timerElement.textContent = `Tempo restante: ${minText}:${secText}`;
+
+    }, 1000);
+</script>
+
+</body>
+</html>

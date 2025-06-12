@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fazer Transferência</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Tahoma", "Verdana", sans-serif;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            width: 400px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background-color: #e5e7eb;
+            border: none;
+            border-radius: 6px;
+        }
+
+        .amount-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .amount-group input {
+            flex: 1;
+            text-align: center;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn-confirmar {
+            background-color: #DB4848;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-cancelar {
+            background-color: white;
+            color: black;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .actions-debug {
+            font-size: 12px;
+            color: #555;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .actions-debug span {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="modal">
+
+    <h2>Fazer transferência</h2>
+
+    <form action="/transferir" method="post">
+
+        <div class="form-group">
+            <label for="iban">IBAN</label>
+            <input type="text" id="iban" name="iban" required>
+        </div>
+
+        <div class="form-group">
+            <label for="entidade">Entidade</label>
+            <input type="text" id="entidade" name="entidade" required>
+        </div>
+
+        <div class="form-group">
+
+            <label>Montante</label>
+
+            <div class="amount-group">
+                <input type="text" name="montante1" maxlength="3" required>
+                <input type="text" name="montante2" maxlength="3" required>
+                <input type="text" name="montante3" maxlength="3" required>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button type="submit" class="btn-confirmar">Confirmar</button>
+            <a href="/" class="btn-cancelar">Cancelar</a>
+        </div>
+
+    </form>
+
+    <div class="actions-debug">
+
+        <span onclick="alert('Erro')">Erro</span>
+
+    </div>
+
+</div>
+</body>
+</html>
+
+<!-- tentar fazer com a página inicial atrás -->

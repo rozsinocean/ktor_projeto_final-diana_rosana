@@ -2,6 +2,8 @@ package com.rosana_diana
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.http.content.resources
 import io.ktor.server.http.content.static
 import io.ktor.server.request.receiveParameters
@@ -27,27 +29,10 @@ fun Application.configureTemplating() {
         static("/static") {
             resources("static")
         }
-        // Index
-        get("/") {
-            try {
-                logger.info("Tentar renderizar o template index")
-                call.respond(ThymeleafContent("index", mapOf()))
-            } catch (e: Exception) {
-                logger.error("Erro ao renderizar template: ${e.message}", e)
-                call.respondText("Erro ao carregar o template: ${e.message}")
-            }
-        }
-
-        // Login
-        get("/") {
-            logger.info("Acessando rota raiz (/)")
-            call.respondRedirect("/login")
-        }
 
         get("/login") {
             logger.info("Tentar mostrar página de login")
             try {
-                // Verificar se o template existe
                 val resource = this::class.java.classLoader.getResource("templates/thymeleaf/login.html")
                 if (resource == null) {
                     logger.error("Arquivo login.html não encontrado!")
@@ -63,51 +48,6 @@ fun Application.configureTemplating() {
             }
         }
 
-        // Suporte
-        get("/suporte") {
-            try {
-                logger.info("Tentar renderizar o template suporte")
-                call.respond(ThymeleafContent("suporte", mapOf()))
-            } catch (e: Exception) {
-                logger.error("Erro ao renderizar template: ${e.message}", e)
-                call.respondText("Erro ao carregar o template: ${e.message}")
-            }
-        }
-
-        // Transferências
-        get("/transferencias") {
-            try {
-                logger.info("Tentar renderizar o template transferecias")
-                call.respond(ThymeleafContent("transferencias", mapOf()))
-            } catch (e: Exception) {
-                logger.error("Erro ao renderizar template: ${e.message}", e)
-                call.respondText("Erro ao carregar o template: ${e.message}")
-            }
-        }
-
-        // Fazer Levantamentos
-        get("/levantamentos") {
-            try {
-                logger.info("Tentar renderizar o template levantamentos")
-                call.respond(ThymeleafContent("levantamentos", mapOf()))
-            } catch (e: Exception) {
-                logger.error("Erro ao renderizar template: ${e.message}", e)
-                call.respondText("Erro ao carregar o template: ${e.message}")
-            }
-        }
-
-        // Pin de multibanco
-        get("/pin_multibanco") {
-            try {
-                logger.info("Tentar renderizar o template pin_multibanco")
-                call.respond(ThymeleafContent("pin_multibanco", mapOf()))
-            } catch (e: Exception) {
-                logger.error("Erro ao renderizar template: ${e.message}", e)
-                call.respondText("Erro ao carregar o template: ${e.message}")
-            }
-        }
-
-        // Registo de cliente
         get("/registo_cliente") {
             try {
                 logger.info("Tentar renderizar o template Registo de Cliente Novo")
@@ -118,10 +58,70 @@ fun Application.configureTemplating() {
             }
         }
 
+        authenticate("auth-jwt") {
+            get("/") {
+                logger.info("DEBUG: Entrou na rota / protegida.")
+                val principal = call.principal<JWTPrincipal>()
+                val email = principal?.getClaim("email", String::class)
+                logger.info("DEBUG: Principal email: $email")
 
+                if (email == null) {
+                    logger.warn("DEBUG: Email nulo na rota / mesmo após autenticação. Redirecionando para login.")
+                    call.respondRedirect("/login") // Garante que redireciona se o email for nulo aqui
+                    return@get
+                }
 
+                try {
+                    logger.info("DEBUG: Preparando para renderizar o template index.")
+                    call.respond(ThymeleafContent("index", mapOf("userEmail" to email)))
+                    logger.info("DEBUG: Chamada a respond(ThymeleafContent) executada.")
+                } catch (e: Exception) {
+                    logger.error("DEBUG: Erro ao renderizar template index: ${e.message}", e)
+                    call.respond(HttpStatusCode.InternalServerError, "Erro ao carregar a página principal: ${e.message}")
+                }
+            }
+
+            get("/suporte") {
+                try {
+                    logger.info("Tentar renderizar o template suporte")
+                    call.respond(ThymeleafContent("suporte", mapOf()))
+                } catch (e: Exception) {
+                    logger.error("Erro ao renderizar template: ${e.message}", e)
+                    call.respondText("Erro ao carregar o template: ${e.message}")
+                }
+            }
+
+            get("/transferencias") {
+                try {
+                    logger.info("Tentar renderizar o template transferecias")
+                    call.respond(ThymeleafContent("transferencias", mapOf()))
+                } catch (e: Exception) {
+                    logger.error("Erro ao renderizar template: ${e.message}", e)
+                    call.respondText("Erro ao carregar o template: ${e.message}")
+                }
+            }
+
+            get("/levantamentos") {
+                try {
+                    logger.info("Tentar renderizar o template levantamentos")
+                    call.respond(ThymeleafContent("levantamentos", mapOf()))
+                } catch (e: Exception) {
+                    logger.error("Erro ao renderizar template: ${e.message}", e)
+                    call.respondText("Erro ao carregar o template: ${e.message}")
+                }
+            }
+
+            get("/pin_multibanco") {
+                try {
+                    logger.info("Tentar renderizar o template pin_multibanco")
+                    call.respond(ThymeleafContent("pin_multibanco", mapOf()))
+                } catch (e: Exception) {
+                    logger.error("Erro ao renderizar template: ${e.message}", e)
+                    call.respondText("Erro ao carregar o template: ${e.message}")
+                }
+            }
+        }
     }
-
 }
 
 

@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 data class Person(
     val id: Int? = null,
     val name: String,
-    val birthdate: String, // String format for easier serialization
+    val birthdate: String,
     val gender: String,
     val email: String,
-    val phone: String?, // Nullable to match table
-    val address: String?, // Nullable to match table
+    val phone: String?,
+    val address: String?,
     val password: String,
     val nif: Int
 )

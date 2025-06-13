@@ -14,4 +14,5 @@ fun Application.module() {
     configureHTTP()
     configureTemplating()
     configureRouting()
+    DatabaseFactory.init(environment.config, false)
 }

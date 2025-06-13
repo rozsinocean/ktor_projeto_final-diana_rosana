@@ -13,34 +13,41 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.thymeleaf.Thymeleaf
-import io.ktor.server.thymeleaf.ThymeleafContent
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import java.sql.Connection
-import java.sql.DriverManager
-import java.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
+import java.util.Date
+
 
 fun Application.configureSecurity() {
-    // Please read the jwt property from the config file if you are using EngineMain
-    val jwtAudience = "jwt-audience"
-    val jwtDomain = "https://jwt-provider-domain/"
-    val jwtRealm = "ktor sample app"
-    val jwtSecret = "secret"
+    val jwtConfig = environment.config.config("jwt")
+    val jwtSecret = jwtConfig.property("secret").getString() // Securely read from config
+    val jwtAudience = jwtConfig.property("audience").getString()
+    val jwtDomain = jwtConfig.property("domain").getString()
+    val jwtRealm = jwtConfig.property("realm").getString()
+
     authentication {
-        jwt {
+        jwt("auth-jwt") {
             realm = jwtRealm
             verifier(
-                JWT
-                    .require(Algorithm.HMAC256(jwtSecret))
+                JWT.require(Algorithm.HMAC256(jwtSecret))
                     .withAudience(jwtAudience)
                     .withIssuer(jwtDomain)
+                    .acceptLeeway(5) // Allow 5 seconds of clock skew
                     .build()
             )
+
             validate { credential ->
-                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
+                // Fine-grained validation
+                val username = credential.payload.getClaim("username").asString()
+                val expiration = credential.expiresAt?.after(Date()) ?: false
+
+                if (username != null && expiration) {
+                    JWTPrincipal(credential.payload)
+                } else {
+                    // Optional logging for debugging reasons (remove in production)
+                    application.log.warn("JWT validation failed: Missing username or expired token.")
+                    null
+                }
             }
         }
     }

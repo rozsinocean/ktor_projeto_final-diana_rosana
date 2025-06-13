@@ -17,7 +17,7 @@
             <ul>
                 <li>Início</li>
                 <li>Contas</li>
-                <li><a href="/transferencias">Transferências</a></li>
+                <li>Transferências</li>
                 <li>Pagamentos</li>
             </ul>
 
@@ -25,16 +25,13 @@
             <ul>
                 <li>O meu perfil</li>
                 <li>Definições</li>
+                <li>
+                    <form action="/logout" method="post">
+                        <button type="submit">Terminar Sessão</button>
+                    </form>
+                </li>
             </ul>
         </div>
-
-        <!-- Terminar sessão fixado no fundo -->
-        <div class="logout">
-            <a href="/logout">
-                <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
-            </a>
-        </div>
-    </div>
     </div>
 
     <!-- Esta parte faz com que Conta/Ultimas Transações/etc fique abaixo uma das outras -->
@@ -49,14 +46,9 @@
       <table>
         <tr>
             <td><button><i class="fa-solid fa-circle-plus" style="color: #DB4848"></i>Adicionar dinheiro</button></td>
-            <td>
-
-                <a href="/transferencias" class="btn-link"><i class="fa-solid fa-money-bill-transfer" style="color: #DB4848"></i>Fazer Transferências</button></a>
-            </td>
+            <td><button><i class="fa-solid fa-money-bill-transfer" style="color: #DB4848"></i>Fazer Transferências</button></td>
             <td><button><i class="fa-solid fa-building-columns" style="color: #DB4848"></i>Todos os Dados</button></td>
-            <td>
-                <a href="/levantamentos" class="btn-link"><i class="fa-solid fa-circle-plus" style="color: #DB4848"></i>Levantar dinheiro</a>
-            </td>
+            <td><button><i class="fa-solid fa-sack-dollar" style="color: #DB4848"></i>Levantar dinheiro</button></td>
         </tr>
       </table>
 
@@ -68,7 +60,7 @@
       <ul class="transactions">
         <li>
           <div class="info">
-            <div class="avatar"><img src="../../static/img/img1.jpg"></div>
+            <div class="avatar"><img src="/static/img/img1.jpg"></div>
             <div>
               <b>Mulher das Notícias</b><br>
               <small>17/04 23:09</small>
@@ -81,7 +73,7 @@
 
         <li>
           <div class="info">
-            <div class="avatar"><img src="../../static/img/img2.jpg"></div>
+            <div class="avatar"><img src="/static/img/img2.jpg"></div>
             <div>
               <b>Elon Muska</b><br>
               <small>21/05 12:32</small>
@@ -114,29 +106,13 @@
         </div>
       </div>
 
+    <!-- Gráfico -->
+      <div class="box">
+        <h3>Despesas deste mês</h3>
+        <iframe src="/static/grafico.html" width="100%" height="300" style="border: none;"></iframe>
 
-
-        <!-- Gráfico -->
-        <div class="box">
-            <h3>Despesas deste mês</h3>
-
-            <div class="chart-container">
-                <canvas id="linhaDespesas"></canvas>
-            </div>
-
-            <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-            <script src="/static/grafico.js"></script>
-
-            <style>
-                .chart-container {
-                    width: auto;
-                    max-width: 500px;
-                    margin: auto;
-                }
-            </style>
-        </div>
-
+      </div>
+    </div>
     </div>
 </body>
 </html>

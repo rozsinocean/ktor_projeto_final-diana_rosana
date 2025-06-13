@@ -1,90 +1,133 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-
-        body{
-            font-family:"Tahoma", "Verdana", "sans-serif";
-            background-color: #D9D9D9 /* cinza claro */
+        body {
+            font-family: "Tahoma", "Verdana", "sans-serif";
+            background-color: #D9D9D9; /* Light gray */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-
         .login-container {
             max-width: 400px;
-            margin: 70px auto;
-            padding: 50px;
-            border: 1px solid white;
+            padding: 30px;
+            border: 1px solid #ccc;
             background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-
         .form-group label {
             display: block;
             margin-bottom: 5px;
         }
-
         .form-group input {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #D9D9D9;
-            background-color: #D9D9D9;
-            border-radius: 4px;
+            background-color: #F9F9F9;
+            border-radius: 5px;
+            font-size: 14px;
         }
-
         .btn-login {
             background-color: #DB4848;
             color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 40%;
+            width: 100%;
             height: 40px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-
         .btn-login:hover {
-            background-color: #ff0000;
+            background-color: #a83232;
         }
-
-        .p-button {
-            color: rgb(66, 79, 120);
-            margin-bottom: 1px;
-            font-size: 12px
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
         }
     </style>
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const nif = document.getElementById("nif").value.trim();
+            const password = document.getElementById("password").value;
+
+            const errorMessage = document.getElementById("error-message");
+            errorMessage.style.display = "none";
+            errorMessage.innerText = "";
+
+            if (!email || !nif || !password) {
+                errorMessage.innerText = "Todos os campos devem ser preenchidos.";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            try {
+                const response = await fetch("/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: new URLSearchParams({
+                        email: email,
+                        nif: nif,
+                        password: password,
+                    }),
+                });
+
+                if (response.ok) {
+                    console.log("Login bem-sucedido. Servidor enviou redirecionamento.");
+                } else {
+                    const errorText = await response.text();
+                    errorMessage.innerText = `Erro no login: ${errorText}`;
+                    errorMessage.style.display = "block";
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                errorMessage.innerText = "Ocorreu um erro inesperado. Tente novamente.";
+                errorMessage.style.display = "block";
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="login-container">
-    <h2>Bem vindo - Entrar</h2>
-    <form action="/login" method="post">
+    <h2>Bem-vindo(a) - Faça seu login</h2>
+    <!-- Login form -->
+    <form id="loginForm" onsubmit="handleLogin(event);">
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="text" id="email" name="email" required>
+            <input type="email" id="email" name="email" required placeholder="Digite seu email">
         </div>
 
         <div class="form-group">
             <label for="nif">NIF (Contribuinte)</label>
-            <input type="number" id="nif" name="nif" required>
+            <input type="number" id="nif" name="nif" required placeholder="Digite seu NIF">
         </div>
 
         <div class="form-group">
             <label for="password">Palavra-Passe</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" required placeholder="Digite sua senha">
         </div>
 
-        <div th:if="${password}" class="error-password">
-            <a href="#" onclick="recuperarSenha()" th:text="${password}" class="p-button">Esqueci-me da Palavra-passe</a>
-        </div>
+        <!-- Error message display -->
+        <div id="error-message" class="error-message"></div>
 
-        <br>
-        <button type="submit" class="btn-login"><b>Entrar</b></button>
-
+        <button type="submit" class="btn-login">Entrar</button>
     </form>
 </div>
 </body>

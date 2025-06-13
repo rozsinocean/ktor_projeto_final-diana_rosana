@@ -7,164 +7,132 @@ import com.rosana_diana.person.PersonRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import org.mindrot.jbcrypt.BCrypt
+import java.util.Date
 
 fun Application.configureRouting() {
     val personRepository = PersonRepository()
 
     routing {
-        // Form Submission: Handle registration
-        post("/registo_cliente") {
-            val params = call.receiveParameters()
+        authenticate("auth-jwt") {
+            post("/registo_cliente") {
+                val params = call.receiveParameters()
 
-            // Retrieve and validate required fields
-            val name = params["name"] ?: ""
-            val email = params["email"] ?: ""
-            val password = params["password"] ?: ""
-            val nif = params["nif"]?.toIntOrNull()
-            val gender = params["gender"] ?: ""
-            val phone = params["phone"]
-            val address = params["address"]
-            val birthdate = params["birthdate"]?.let { java.time.LocalDate.parse(it) }
+                val name = params["name"] ?: ""
+                val email = params["email"] ?: ""
+                val password = params["password"] ?: ""
+                val nif = params["nif"]?.toIntOrNull()
+                val gender = params["gender"] ?: ""
+                val phone = params["phone"]
+                val address = params["address"]
+                val birthdate = params["birthdate"]?.let { java.time.LocalDate.parse(it) }
 
-            if (name.isBlank() || email.isBlank() || password.isBlank() || nif == null || gender.isBlank() || birthdate == null) {
-                call.respond(
-                    ThymeleafContent(
-                        "registo_cliente", mapOf("error" to "Todos os campos obrigatórios devem ser preenchidos.")
-                    )
-                )
-                return@post
-            }
-
-            try {
-                // Hash password and store the person
-                val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
-                val newPerson = Person(
-                    name = name,
-                    email = email,
-                    password = hashedPassword,
-                    nif = nif,
-                    gender = gender,
-                    phone = phone,
-                    address = address,
-                    birthdate = birthdate.toString()
-                )
-                personRepository.createPerson(newPerson)
-
-                // Show success message
-                call.respond(
-                    ThymeleafContent(
-                        "registo_cliente", mapOf(
-                            "message" to "Registro efetuado com sucesso para $name (${email})."
-                        )
-                    )
-                )
-            } catch (e: Exception) {
-                if (e.message?.contains("unique constraint") == true) {
+                if (name.isBlank() || email.isBlank() || password.isBlank() || nif == null || gender.isBlank() || birthdate == null) {
                     call.respond(
                         ThymeleafContent(
-                            "registo_cliente", mapOf("error" to "O Email ou NIF fornecido já está registrado.")
+                            "registo_cliente", mapOf("error" to "Todos os campos obrigatórios devem ser preenchidos.")
                         )
                     )
-                } else {
-                    call.respond(
-                        ThymeleafContent(
-                            "registo_cliente", mapOf("error" to "Erro inesperado: ${e.localizedMessage}")
-                        )
-                    )
+                    return@post
                 }
-            }
-        }
 
-        // Page: Login Form
-        get("/login") {
-            call.respond(ThymeleafContent("login", mapOf()))
-        }
-
-        // Form Submission: Handle login
-        post("/login") {
-            val params = call.receiveParameters()
-
-            // Retrieve fields
-            val email = params["email"] ?: ""
-            val password = params["password"] ?: ""
-            val nif = params["nif"]?.toIntOrNull()
-
-            // Validate required fields
-            if (email.isBlank() || password.isBlank() || nif == null) {
-                call.respond(
-                    ThymeleafContent(
-                        "login", mapOf("error" to "Todos os campos obrigatórios devem ser preenchidos.")
+                try {
+                    val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
+                    val newPerson = Person(
+                        name = name,
+                        email = email,
+                        password = hashedPassword,
+                        nif = nif,
+                        gender = gender,
+                        phone = phone,
+                        address = address,
+                        birthdate = birthdate.toString()
                     )
-                )
-                return@post
-            }
+                    personRepository.createPerson(newPerson)
 
-            try {
-                val person = personRepository.allPerson()
-                    .find { it.email == email && it.nif == nif }
-
-                if (person != null && BCrypt.checkpw(password, person.password)) {
-                    // Generate JWT token
-                    val jwtConfig = environment.config.config("jwt")
-                    val jwtSecret = jwtConfig.property("secret").getString()
-                    val jwtAudience = jwtConfig.property("audience").getString()
-                    val jwtDomain = jwtConfig.property("domain").getString()
-
-                    val token = JWT.create()
-                        .withAudience(jwtAudience)
-                        .withIssuer(jwtDomain)
-                        .withClaim("email", person.email)
-                        .sign(Algorithm.HMAC256(jwtSecret))
-
-                    // Successful login, redirect or render success page
                     call.respond(
                         ThymeleafContent(
-                            "login_success", mapOf(
-                                "message" to "Login bem-sucedido para ${person.name}.",
-                                "token" to token
+                            "registo_cliente", mapOf(
+                                "message" to "Registro efetuado com sucesso para $name (${email})."
                             )
                         )
                     )
-                } else {
-                    call.respond(
-                        ThymeleafContent(
-                            "login", mapOf("error" to "Email, NIF ou senha inválidos.")
+                } catch (e: Exception) {
+                    if (e.message?.contains("unique constraint") == true) {
+                        call.respond(
+                            ThymeleafContent(
+                                "registo_cliente", mapOf("error" to "O Email ou NIF fornecido já está registrado.")
+                            )
                         )
-                    )
+                    } else {
+                        call.respond(
+                            ThymeleafContent(
+                                "registo_cliente", mapOf("error" to "Erro inesperado: ${e.localizedMessage}")
+                            )
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                call.respond(
-                    ThymeleafContent(
-                        "login", mapOf("error" to "Erro inesperado: ${e.localizedMessage}")
-                    )
-                )
             }
         }
 
-        // Protected Route
-        authenticate("auth-jwt") {
-            get("/protected") {
-                val principal = call.principal<JWTPrincipal>()
-                val email = principal?.getClaim("email", String::class)
+        post("/login") {
+            val params = call.receiveParameters()
+            val email = params["email"] ?: ""
+            val nif = params["nif"] ?: ""
+            val password = params["password"] ?: ""
 
-                if (email != null) {
-                    call.respondText("Bem-vindo, $email! Esta é uma rota protegida.")
-                } else {
-                    call.respond(HttpStatusCode.Unauthorized, "Não foi possível recuperar informações do usuário.")
+            try {
+                val person = personRepository.findByEmail(email)
+
+                if (person == null || person.nif.toString() != nif || !BCrypt.checkpw(password, person.password)) {
+                    application.log.warn("Senha inválida para o usuário: $email com NIF: $nif")
+                    call.respond(HttpStatusCode.Unauthorized, "Email, senha ou NIF inválidos.")
+                    return@post
                 }
+
+                application.log.info("Login bem-sucedido para o usuário: $email com NIF: $nif")
+
+                val token = JWT.create()
+                    .withAudience(environment.config.property("jwt.audience").getString())
+                    .withIssuer(environment.config.property("jwt.domain").getString())
+                    .withClaim("email", person.email)
+                    .withClaim("nif", person.nif)
+                    .withExpiresAt(Date(System.currentTimeMillis() + 60 * 60 * 1000)) // Token expira em 1 hora
+                    .sign(Algorithm.HMAC256(environment.config.property("jwt.secret").getString()))
+
+                call.response.cookies.append(
+                    Cookie(
+                        name = "jwt_token",
+                        value = token,
+                        httpOnly = true,
+                        secure = false,
+                        path = "/",
+                        maxAge = 60 * 60
+                    )
+                )
+
+                call.respondRedirect("http://127.0.0.1:8080/", permanent = false)
+
+            } catch (e: Exception) {
+                application.log.error("Erro durante o processo de login:", e)
+                call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado durante o login.")
             }
+        }
+
+
+        post("/logout") {
+            call.response.cookies.append(
+                Cookie(
+                    name = "jwt_token",
+                    value = "",
+                    maxAge = 0
+                )
+            )
+            call.respondRedirect("/login")
         }
     }
 }
-
-// Data class for login credentials
-data class UserCredentials(
-    val email: String,
-    val password: String
-)

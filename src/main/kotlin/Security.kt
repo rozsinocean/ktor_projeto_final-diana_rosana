@@ -3,6 +3,7 @@ package com.rosana_diana
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.*
+import io.ktor.http.auth.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -20,7 +21,7 @@ import java.util.Date
 
 fun Application.configureSecurity() {
     val jwtConfig = environment.config.config("jwt")
-    val jwtSecret = jwtConfig.property("secret").getString() // Securely read from config
+    val jwtSecret = jwtConfig.property("secret").getString()
     val jwtAudience = jwtConfig.property("audience").getString()
     val jwtDomain = jwtConfig.property("domain").getString()
     val jwtRealm = jwtConfig.property("realm").getString()
@@ -28,26 +29,42 @@ fun Application.configureSecurity() {
     authentication {
         jwt("auth-jwt") {
             realm = jwtRealm
+            authSchemes("Bearer")
+            authHeader { call ->
+                val header = call.request.parseAuthorizationHeader()
+                if (header is HttpAuthHeader.Single && header.authScheme == "Bearer") {
+                    return@authHeader HttpAuthHeader.Single("Bearer", header.blob)
+                }
+
+                val tokenFromCookie = call.request.cookies["jwt_token"]
+                if (tokenFromCookie != null) {
+                    return@authHeader HttpAuthHeader.Single("Bearer", tokenFromCookie)
+                }
+                null
+            }
+
             verifier(
                 JWT.require(Algorithm.HMAC256(jwtSecret))
                     .withAudience(jwtAudience)
                     .withIssuer(jwtDomain)
-                    .acceptLeeway(5) // Allow 5 seconds of clock skew
+                    .acceptLeeway(5)
                     .build()
             )
 
             validate { credential ->
-                // Fine-grained validation
-                val username = credential.payload.getClaim("username").asString()
+                val email = credential.payload.getClaim("email").asString()
                 val expiration = credential.expiresAt?.after(Date()) ?: false
 
-                if (username != null && expiration) {
+                if (email != null && expiration) {
+                    application.log.info("Token validated successfully for email: $email")
                     JWTPrincipal(credential.payload)
                 } else {
-                    // Optional logging for debugging reasons (remove in production)
-                    application.log.warn("JWT validation failed: Missing username or expired token.")
+                    application.log.warn("JWT validation failed: email=$email, expiration=$expiration")
                     null
                 }
+            }
+            challenge { _, _ ->
+                call.respondRedirect("/login")
             }
         }
     }

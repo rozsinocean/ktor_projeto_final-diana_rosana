@@ -54,4 +54,10 @@ class PersonRepository : PersonInterface {
     override fun deletePerson(id: Int): Boolean = transaction {
         PersonTable.deleteWhere { PersonTable.id eq id } > 0
     }
+
+    override fun findByEmail(email: String): Person? = transaction {
+        PersonTable.select {
+            PersonTable.email eq email
+        }.map { it.toPerson() }.singleOrNull() // Returns null if no person is found
+    }
 }

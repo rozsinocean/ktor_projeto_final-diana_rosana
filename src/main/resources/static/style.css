@@ -20,6 +20,19 @@ body {
     justify-content: space-between;
 }
 
+.sidebar ul li a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .sidebar h3 {
     margin: 16px 0 8px;
     font-size: 14px;
@@ -96,21 +109,6 @@ button {
     transition: background-color 0.3s;
 }
 
-
-/* .actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 24px;
-  text-align: center;
-}
-
-.actions div {
-  flex: 1;
-  font-size: 14px;
-}
-*/
-
-
 .transactions li {
     display: flex;
     justify-content: space-between;
@@ -163,3 +161,49 @@ button {
     margin-right: 10px;
     vertical-align: middle;
 }
+
+.logout {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.logout a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: inherit;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 0;
+}
+
+.logout a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.logout i {
+    color: red;
+}
+
+.btn-link {
+    background-color: white;
+    border: 0;
+    padding: 35px;
+    font-size: 18px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none; /* tira underline */
+    color: inherit; /* herda cor do texto */
+    transition: background-color 0.3s;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+

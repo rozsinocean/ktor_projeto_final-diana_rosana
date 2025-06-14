@@ -120,6 +120,16 @@ fun Application.configureTemplating() {
                     call.respondText("Erro ao carregar o template: ${e.message}")
                 }
             }
+
+            get("/pesquisar_Cliente") {
+                try {
+                    logger.info("Tentar renderizar o template pesquisar cliente")
+                    call.respond(ThymeleafContent("pesquisar_CLiente", mapOf()))
+                } catch (e: Exception) {
+                    logger.error("Erro ao renderizar template: ${e.message}", e)
+                    call.respondText("Erro ao carregar o template: ${e.message}")
+                }
+            }
         }
     }
 }

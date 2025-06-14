@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Página Principal do Funcionário</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Tahoma", "Verdana", sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: white;
+            border-right: 1px solid #ddd;
+            height: 123vh auto; /* Altura da viewport */
+            padding: 24px;
+            display: flex;          /* Flex container vertical */
+            flex-direction: column; /* Coloca elementos em coluna */
+        }
+
+        .sidebar h2 {
+            font-size: 22px;
+            margin-bottom: 24px;
+            color: #e53935;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 16px 0;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 10px;
+            color: #DB4848;
+            font-size: 18px;
+        }
+
+        /* Badge ao lado do texto */
+        .sidebar ul li a .badge {
+            background: #DB4848;
+            color: white;
+            font-size: 12px;
+            border-radius: 12px;
+            padding: 2px 7px;
+            font-weight: bold;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* o logout vai para baixo */
+        .logout {
+            margin-top: auto; /* empurra para o fim da sidebar */
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .logout a  {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: inherit;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 0;
+        }
+
+        .logout a:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .logout i {
+            color: red;
+        }
+
+        .main {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #DB4848;
+        }
+
+        h1 {
+            color: #DB4848;
+            margin-bottom: 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        .card p {
+            color: #777;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #DB4848;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            background-color: #ff0000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        table th {
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .quick-actions .card {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .quick-actions .card:hover {
+            background-color: #f9e6e6;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Barra -->
+<div class="sidebar">
+    <h2><i class="fa-solid fa-building-columns"></i> Banco</h2>
+    <ul>
+        <li><a href="#"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+        <li><a href="#"><i class="fa-solid fa-user-plus"></i> Novo Cliente</a></li>
+        <li><a href="#"><i class="fa-solid fa-users"></i> Clientes</a></li>
+        <li><a href="#"><i class="fa-solid fa-piggy-bank"></i> Contas</a></li>
+        <li><a href="#"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</a></li>
+        <li>
+            <a href="#" class="mensagens-link">
+                <i class="fa-solid fa-envelope"></i> Mensagens
+                <span class="badge">3</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="logout">
+        <a href="/login">
+            <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+        </a>
+    </div>
+</div>
+
+<!-- Página Principal - Parte central -->
+<div class="main">
+    <div class="header">
+        <h1>Bem-vindo, Funcionário!</h1>
+        <p>Último login: 14/06/2025 às 10:42</p>
+    </div>
+
+    <!-- Cartões bonitos e interativos -->
+    <div class="cards">
+        <div class="card">
+            <h3>Total de Clientes</h3>
+            <p>2456</p>
+        </div>
+        <div class="card">
+            <h3>Contas Ativas</h3>
+            <p></p>
+        </div>
+        <div class="card">
+            <h3>Transferências Pendentes</h3>
+            <p></p>
+            <a href="#" class="button">Ver todas</a>
+        </div>
+        <div class="card">
+            <h3>Novos Registos Hoje</h3>
+            <p></p>
+        </div>
+    </div>
+
+    <!-- Mais botões -->
+    <div class="cards">
+        <div class="card">
+            <h3>Registar Novo Cliente</h3>
+            <p>Adicione um novo cliente ao sistema bancário.</p>
+            <a href="/novoCliente" class="button">Registar</a>
+        </div>
+        <div class="card">
+            <h3>Consultar Clientes</h3>
+            <p>Pesquisar e visualizar informações de clientes.</p>
+            <a href="/clientes" class="button">Consultar</a>
+        </div>
+        <div class="card">
+            <h3>Gerir Contas</h3>
+            <p>Abrir, editar ou encerrar contas bancárias.</p>
+            <a href="/contas" class="button">Gerir</a>
+        </div>
+    </div>
+
+    <!-- Atalhos rápidos adicionais -->
+    <div class="quick-actions">
+        <div class="card" th:each="acao : ${acoesRapidas}" th:onclick="'location.href=\'' + acao.url + '\';'" style="cursor:pointer;">
+            <h3 th:text="${acao.nome}">Nova Tarefa</h3>
+            <p th:text="${acao.descricao}">Descrição da ação</p>
+        </div>
+    </div>
+
+    <!-- Tabela de ações recentes -->
+    <h3 style="margin: 30px 0 10px;">Últimas Ações</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Funcionário</th>
+            <th>Ação</th>
+            <th>Data</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>João Silva</td>
+            <td>Registou novo cliente</td>
+            <td>14/06/2025 09:35</td>
+        </tr>
+        <tr>
+            <td>Maria Lopes</td>
+            <td>Autorizou transferência</td>
+            <td>14/06/2025 08:50</td>
+        </tr>
+        <tr>
+            <td>João Silva</td>
+            <td>Atualizou morada de cliente</td>
+            <td>13/06/2025 17:10</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

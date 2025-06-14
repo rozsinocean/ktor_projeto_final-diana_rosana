@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pesquisar Cliente</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Tahoma", "Verdana", sans-serif;
+      background-color: #f3f4f6;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: white;
+      border-right: 1px solid #ddd;
+      height: 123vh auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar h2 {
+      font-size: 22px;
+      margin-bottom: 24px;
+      color: #e53935;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      margin: 16px 0;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+    }
+
+    .sidebar ul li a i {
+      margin-right: 10px;
+      color: #db4848;
+      font-size: 18px;
+    }
+
+    .sidebar ul li a .badge {
+      background: #db4848;
+      color: white;
+      font-size: 12px;
+      border-radius: 12px;
+      padding: 2px 7px;
+      font-weight: bold;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .logout {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+
+    .logout a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px 0;
+    }
+
+    .logout a:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .logout i {
+      color: red;
+    }
+
+    .main {
+      flex: 1;
+      padding: 60px;
+    }
+
+    h1 {
+      color: #db4848;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+    }
+
+    button {
+      background-color: #db4848;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #c43131;
+    }
+
+    .resultados {
+      max-width: 700px;
+      margin: 40px auto 0;
+    }
+
+    .resultados h2 {
+      margin-bottom: 20px;
+      color: #444;
+    }
+
+    .resultados ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .resultados li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .resultados .ver {
+      background-color: #db4848;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .resultados .ver:hover {
+      background-color: #c43131;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Barra -->
+<div class="sidebar">
+  <h2><i class="fa-solid fa-building-columns"></i> Banco</h2>
+  <ul>
+    <li><a href="#"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+    <li><a href="#"><i class="fa-solid fa-user-plus"></i> Novo Cliente</a></li>
+    <li><a href="#"><i class="fa-solid fa-users"></i> Clientes</a></li>
+    <li><a href="#"><i class="fa-solid fa-piggy-bank"></i> Contas</a></li>
+    <li><a href="#"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</a></li>
+    <li>
+      <a href="#" class="mensagens-link">
+        <i class="fa-solid fa-envelope"></i> Mensagens
+        <span class="badge">3</span>
+      </a>
+    </li>
+  </ul>
+
+  <div class="logout">
+    <a href="/login">
+      <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+    </a>
+  </div>
+</div>
+
+<!-- Conteúdo principal -->
+<div class="main">
+  <h1>Pesquisar Cliente</h1>
+
+  <form action="/funcionario/pesquisar-cliente" method="get">
+    <label for="nome">Nome do Cliente</label>
+    <input type="text" id="nome" name="nome" placeholder=" " />
+
+    <label for="nif">NIF / Email</label>
+    <input type="text" id="nif" name="nif" placeholder=" " />
+
+    <button type="submit">Procurar</button>
+  </form>
+
+  <!-- Resultados de pesquisa -->
+  <div class="resultados" th:if="${clientes != null}">
+    <h2>Resultados:</h2>
+    <ul>
+      <li th:each="cliente : ${clientes}">
+        <span th:text="${cliente.nome}">Nome Cliente</span>
+        <a
+                th:href="@{/funcionario/cliente/{id}(id=${cliente.id})}"
+                class="ver"
+        >Ver</a
+        >
+      </li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

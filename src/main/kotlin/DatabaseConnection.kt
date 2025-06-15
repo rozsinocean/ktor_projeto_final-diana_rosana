@@ -10,6 +10,7 @@ import com.rosana_diana.transactiontype.TransactionTypeTable
 import org.jetbrains.exposed.sql.transactions.transaction
 import io.ktor.server.config.*
 import org.jetbrains.exposed.sql.*
+import java.time.LocalDate
 
 object DatabaseFactory {
     fun init(config: ApplicationConfig, embedded: Boolean) {
@@ -62,6 +63,30 @@ object DatabaseFactory {
                 }
                 AccountTypeTable.insert {
                     it[name] = "Crédito"
+                }
+            }
+
+            if (PersonTable.selectAll().count() == 0L) {
+                val adminPersonId = PersonTable.insert {
+                    it[name] = "Admin User"
+                    it[birthdate] = LocalDate.of(1990, 1, 1)
+                    it[gender] = "Não Especificado"
+                    it[email] = "admin@bankapp.com"
+                    it[phone] = "912345676"
+                    it[address] = "Rua do Administrador, 10, Cidade Admin"
+                    it[password] = "seu_hash_de_senha_admin"
+                    it[nif] = 999888777
+                } get PersonTable.id
+
+                ClientTable.insert {
+                    it[personId] = adminPersonId
+                }
+
+                EmployeeTable.insert {
+                    it[personId] = adminPersonId
+                    it[admissionDate] = LocalDate.now()
+                    it[salary] = 5000.00
+                    it[idPosition] = 1
                 }
             }
         }

@@ -1,4 +1,3 @@
-// src/main/kotlin/com/rosana_diana/transaction/TransactionRepository.kt
 package com.rosana_diana.transaction
 
 import com.rosana_diana.account.AccountTable
@@ -20,7 +19,6 @@ class TransactionRepository : TransactionInterface {
     }
 
     override fun createTransaction(transaction: Transaction): Transaction = transaction {
-        // Validações de contas (certifique-se que as contas existem)
         if (transaction.id_source_account != null) {
             val sourceAccountExists = AccountTable.select { AccountTable.id_account eq transaction.id_source_account }.singleOrNull() != null
             if (!sourceAccountExists) {
@@ -34,7 +32,6 @@ class TransactionRepository : TransactionInterface {
             }
         }
 
-        // Validação de tipo de transação
         val transactionTypeExists = TransactionTypeTable.select { TransactionTypeTable.id eq transaction.id_transaction_type }.singleOrNull() != null
         if (!transactionTypeExists) {
             throw IllegalArgumentException("Transaction type with ID ${transaction.id_transaction_type} does not exist.")
@@ -44,7 +41,7 @@ class TransactionRepository : TransactionInterface {
             it[id_source_account] = transaction.id_source_account
             it[id_destination_account] = transaction.id_destination_account
             it[amount] = transaction.amount
-            it[transaction_datetime] = LocalDateTime.parse(transaction.transaction_datetime) // String para LocalDateTime
+            it[transaction_datetime] = LocalDateTime.parse(transaction.transaction_datetime)
             it[id_transaction_type] = transaction.id_transaction_type
             it[description] = transaction.description
         } get TransactionTable.id_transaction
@@ -80,7 +77,7 @@ class TransactionRepository : TransactionInterface {
     }
 
     override fun getTransactionsBetweenDates(startDate: String, endDate: String): List<Transaction> = transaction {
-        val startDateTime = LocalDateTime.parse(startDate) // Assumindo formato compatível com ISO
+        val startDateTime = LocalDateTime.parse(startDate)
         val endDateTime = LocalDateTime.parse(endDate)
 
         TransactionTable.select {

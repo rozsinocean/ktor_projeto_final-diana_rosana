@@ -2,10 +2,17 @@ package com.rosana_diana
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.rosana_diana.account.Account
+import com.rosana_diana.account.AccountRepository
+import com.rosana_diana.accounttype.AccountTypeRepository
 import com.rosana_diana.client.Client
 import com.rosana_diana.client.ClientRepository
 import com.rosana_diana.person.Person
 import com.rosana_diana.person.PersonRepository
+import com.rosana_diana.transaction.TransactionRepository
+import com.rosana_diana.transaction.TransactionService
+import com.rosana_diana.transactiontype.TransactionTypeRepository
+import com.rosana_diana.utilitys.IbanGenerator
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -19,6 +26,11 @@ import java.util.Date
 fun Application.configureRouting() {
     val personRepository = PersonRepository()
     val clientRepository = ClientRepository()
+    val accountRepository = AccountRepository()
+    val transactionRepository = TransactionRepository()
+    val accountTypeRepository = AccountTypeRepository()
+    val transactionTypeRepository = TransactionTypeRepository()
+    val transactionService = TransactionService(accountRepository, transactionRepository, transactionTypeRepository) // <--- ATUALIZAR CONSTRUTOR
 
     routing {
         authenticate("auth-jwt") {
@@ -60,7 +72,19 @@ fun Application.configureRouting() {
 
                     if (createdPerson.id != null) {
                         val newClient = Client(id = 0, personId = createdPerson.id)
-                        clientRepository.createClient(newClient)
+                        val createdClient = clientRepository.createClient(newClient)
+
+                        val newAccount = Account(
+                            iban = IbanGenerator.generateIban(),
+                            balance = 0.0,
+                            id_primaryholder = createdClient.id,
+                            id_secondaryholder = null,
+                            id_accountType = 1,
+                            id_account = 0,
+                            opening_date = java.time.LocalDate.now().toString()
+                        )
+
+                        accountRepository.createAccount(newAccount)
                     }
 
                     call.respond(
@@ -84,6 +108,91 @@ fun Application.configureRouting() {
                             )
                         )
                     }
+                }
+            }
+
+            post("/depositos") {
+                val params = call.receiveParameters()
+                val accountIban = params["iban"]
+                val amount = params["amount"]?.toDoubleOrNull()
+
+                if (accountIban.isNullOrBlank() || amount == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Dados de depósito inválidos. Forneça accountIban e amount.")
+                    return@post
+                }
+
+                try {
+                    transactionService.makeDeposit(accountIban, amount)
+
+                    call.respond(
+                        ThymeleafContent(
+                            "depositos", mapOf(
+                                "message" to "Deposito efetuado com sucesso para para o iban (${accountIban})."
+                            )
+                        )
+                    )
+                } catch (e: TransactionService.TransactionServiceException) {
+                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Erro no depósito.")
+                } catch (e: Exception) {
+                    application.log.error("Erro inesperado ao realizar depósito:", e)
+                    call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado ao processar o depósito.")
+                }
+            }
+
+            post("/levantamentos") {
+                val params = call.receiveParameters()
+                val accountIban = params["iban"]
+                val amount = params["amount"]?.toDoubleOrNull()
+
+                if (accountIban.isNullOrBlank() || amount == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Dados de levantamento inválidos. Forneça accountIban e amount.")
+                    return@post
+                }
+
+                try {
+                    transactionService.makeWithdrawal(accountIban, amount)
+
+                    call.respond(
+                        ThymeleafContent(
+                            "levantamentos", mapOf(
+                                "message" to "Levantamento efetuado com sucesso do iban (${accountIban})."
+                            )
+                        )
+                    )
+                } catch (e: TransactionService.TransactionServiceException) {
+                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Erro no levantamento.")
+                } catch (e: Exception) {
+                    application.log.error("Erro inesperado ao realizar levantamento:", e)
+                    call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado ao processar o levantamento.")
+                }
+            }
+
+            post("/transferencias") {
+                val params = call.receiveParameters()
+                val sourceIban = params["sourceIban"]
+                val destinationIban = params["destinationIban"]
+                val amount = params["amount"]?.toDoubleOrNull()
+
+                if (sourceIban.isNullOrBlank() || destinationIban.isNullOrBlank() || amount == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Dados de transferência inválidos. Forneça sourceIban, destinationIban e amount.")
+                    return@post
+                }
+
+                try {
+                    transactionService.makeTransfer(sourceIban, destinationIban, amount)
+
+                    call.respond(
+                        ThymeleafContent(
+                            "transferencias", mapOf(
+                                "message" to "Transferencia efetuado com sucesso do iban de origem (${sourceIban}) para iban (${destinationIban})."
+                            )
+                        )
+                    )
+                } catch (e: TransactionService.TransactionServiceException) {
+                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Erro na transferência.")
+                } catch (e: Exception) {
+                    application.log.error("Erro inesperado ao realizar transferência:", e)
+                    call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado ao processar a transferência.")
                 }
             }
         }
@@ -123,9 +232,6 @@ fun Application.configureRouting() {
                         maxAge = 60 * 60
                     )
                 )
-
-                call.respondRedirect("http://127.0.0.1:8080/", permanent = false)
-
             } catch (e: Exception) {
                 application.log.error("Erro durante o processo de login:", e)
                 call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado durante o login.")

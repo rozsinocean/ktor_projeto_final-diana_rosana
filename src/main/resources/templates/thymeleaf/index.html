@@ -38,56 +38,63 @@
 
     <!-- Esta parte faz com que Conta/Ultimas Transações/etc fique abaixo uma das outras -->
     <div class="main">
+        <!-- Conta -->
+        <div class="box" th:each="account : ${accounts}">
+            <p>
+                <span th:if="${account.id_accountType == 1}">Conta à Ordem</span>
+                <span th:if="${account.id_accountType == 2}">Conta Poupança</span>
+                <span th:if="${account.id_accountType == 3}">Conta Crédito</span>
+                <span th:if="${account.id_accountType != 1 and account.id_accountType != 2 and account.id_accountType != 3}">Tipo Desconhecido</span>
+            </p>
 
-    <!-- Conta -->
-    <div class="box">
-      <p>Conta Pessoal • EUR</p>
-      <h1>24.075 EUR</h1>
-      <button class="button">Contas</button>
+            <h1 th:text="${#numbers.formatCurrency(account.balance)}"></h1>
 
-      <table>
-        <tr>
-            <td><button><i class="fa-solid fa-circle-plus" style="color: #DB4848"></i>Adicionar dinheiro</button></td>
-            <td><button><i class="fa-solid fa-money-bill-transfer" style="color: #DB4848"></i>Fazer Transferências</button></td>
-            <td><button><i class="fa-solid fa-building-columns" style="color: #DB4848"></i>Todos os Dados</button></td>
-            <td><button><i class="fa-solid fa-sack-dollar" style="color: #DB4848"></i>Levantar dinheiro</button></td>
-        </tr>
-      </table>
+            <table>
+                <tr>
+                    <td><button><i class="fa-solid fa-circle-plus" style="color: #DB4848"></i>Adicionar dinheiro</button></td>
+                    <td><button><i class="fa-solid fa-money-bill-transfer" style="color: #DB4848"></i>Fazer Transferências</button></td>
+                    <td><button><i class="fa-solid fa-building-columns" style="color: #DB4848"></i>Todos os Dados</button></td>
+                    <td><button><i class="fa-solid fa-sack-dollar" style="color: #DB4848"></i>Levantar dinheiro</button></td>
+                </tr>
+            </table>
+        </div>
 
-    </div>
+        <div th:unless="${not #lists.isEmpty(accounts)}">
+            <p>Você não possui contas para exibir.</p>
+        </div>
 
-    <!-- Últimas transações -->
-     <div class="box">
-      <h3>Últimas transações</h3>
-      <ul class="transactions">
-        <li>
-          <div class="info">
-            <div class="avatar"><img src="/static/img/img1.jpg"></div>
-            <div>
-              <b>Mulher das Notícias</b><br>
-              <small>17/04 23:09</small>
-            </div>
-          </div>
-          <span>24,78 EUR</span>
-        </li>
+        <!-- Últimas transações -->
+         <div class="box">
+          <h3>Últimas transações</h3>
+          <ul class="transactions">
+            <li>
+              <div class="info">
+                <div class="avatar"><img src="/static/img/img1.jpg"></div>
+                <div>
+                  <b>Mulher das Notícias</b><br>
+                  <small>17/04 23:09</small>
+                </div>
+              </div>
+              <span>24,78 EUR</span>
+            </li>
 
-        <hr style="border: 1px solid #ccc; margin: 20px 0;">
+            <hr style="border: 1px solid #ccc; margin: 20px 0;">
 
-        <li>
-          <div class="info">
-            <div class="avatar"><img src="/static/img/img2.jpg"></div>
-            <div>
-              <b>Elon Muska</b><br>
-              <small>21/05 12:32</small>
-            </div>
-          </div>
-          <span>2924,02 EUR</span>
-        </li>
-      </ul>
-    </div>
+            <li>
+              <div class="info">
+                <div class="avatar"><img src="/static/img/img2.jpg"></div>
+                <div>
+                  <b>Elon Muska</b><br>
+                  <small>21/05 12:32</small>
+                </div>
+              </div>
+              <span>2924,02 EUR</span>
+            </li>
+          </ul>
+        </div>
 
-     <!-- Património e gráfico -->
-    <div class="summary">
+         <!-- Património e gráfico -->
+        <div class="summary">
       <div class="box">
         <h3>Património Total</h3>
 

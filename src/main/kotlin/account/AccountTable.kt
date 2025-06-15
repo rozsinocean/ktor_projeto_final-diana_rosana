@@ -15,7 +15,7 @@ object AccountTable : Table("account") {
     val iban = varchar("iban", 34).uniqueIndex()
     val balance = double("balance")
     val id_primaryholder = reference("id_primaryholder", ClientTable.id, onDelete = ReferenceOption.NO_ACTION)
-    val id_secondaryholder = integer("id_secondaryholder").nullable()
+    val id_secondaryholder = reference("id_secondaryholder", ClientTable.id, onDelete = ReferenceOption.NO_ACTION).nullable()
     val opening_date = date("opening_date")
     val id_accountType = reference("id_account_type", AccountTypeTable.id, onDelete = ReferenceOption.NO_ACTION)
 }

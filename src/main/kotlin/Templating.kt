@@ -1,5 +1,11 @@
 package com.rosana_diana
 
+import com.rosana_diana.account.AccountRepository
+import com.rosana_diana.accounttype.AccountTypeRepository
+import com.rosana_diana.client.ClientRepository
+import com.rosana_diana.person.PersonRepository
+import com.rosana_diana.transaction.Transaction
+import com.rosana_diana.transaction.TransactionRepository
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -24,6 +30,12 @@ fun Application.configureTemplating() {
             checkExistence = true // Isso vai ajudar a debugar
         })
     }
+
+    val personRepository = PersonRepository()
+    val clientRepository = ClientRepository()
+    val accountRepository = AccountRepository()
+    val transactionRepository = TransactionRepository()
+    val accountTypeRepository = AccountTypeRepository()
 
     routing {
         static("/static") {
@@ -69,9 +81,50 @@ fun Application.configureTemplating() {
                 }
 
                 try {
-                    call.respond(ThymeleafContent("index", mapOf("userEmail" to email)))
+                    val person = personRepository.findByEmail(email)
+
+                    if (person == null) {
+                        call.respondRedirect("/login")
+                        return@get
+                    }
+
+                    val client = clientRepository.findByPersonId(person.id!!)
+
+                    val accounts = client?.id?.let { clientId ->
+                        accountRepository.getAccountsByPrimaryHolder(clientId)
+                    } ?: emptyList()
+
+                    val userTransactions = mutableSetOf<Transaction>()
+                    val userAccountIds = accounts.mapNotNull { it.id_account }
+
+                    for (accountId in userAccountIds) {
+                        userTransactions.addAll(transactionRepository.getTransactionsBySourceAccount(accountId))
+                        userTransactions.addAll(transactionRepository.getTransactionsByDestinationAccount(accountId))
+                    }
+
+                    val allUserTransactions = userTransactions.toList()
+
+                    val allAccountTypes = accountTypeRepository.allAccountTypes()
+                    val accountTypeNamesById = allAccountTypes.associateBy { it.id }.mapValues { it.value.name }
+
+
+                    val data = mutableMapOf<String, Any>(
+                        "userEmail" to email,
+                        "person" to person,
+                        "accounts" to accounts,
+                        "transactions" to allUserTransactions,
+                        "accountTypes" to accountTypeNamesById,
+                    )
+
+                    if (client != null) {
+                        data["client"] = client
+                    }
+
+                    call.respond(ThymeleafContent("index", data.toMap()))
+
                 } catch (e: Exception) {
-                    call.respond(HttpStatusCode.InternalServerError, "Erro ao carregar a página principal: ${e.message}")
+                    application.log.error("Erro ao carregar a página principal:", e)
+                    call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado ao carregar seus dados: ${e.message}")
                 }
             }
 
@@ -86,9 +139,29 @@ fun Application.configureTemplating() {
             }
 
             get("/transferencias") {
+                val principal = call.principal<JWTPrincipal>()
+                val email = principal?.getClaim("email", String::class)
+
+                if (email == null) {
+                    call.respondRedirect("/login")
+                    return@get
+                }
+
                 try {
-                    logger.info("Tentar renderizar o template transferecias")
-                    call.respond(ThymeleafContent("transferencias", mapOf()))
+                    val person = personRepository.findByEmail(email)
+
+                    if (person == null) {
+                        call.respondRedirect("/login")
+                        return@get
+                    }
+
+                    val client = clientRepository.findByPersonId(person.id!!)
+
+                    val accounts = client?.id?.let { clientId ->
+                        accountRepository.getAccountsByPrimaryHolder(clientId)
+                    } ?: emptyList()
+
+                    call.respond(ThymeleafContent("transferencias", mapOf("accounts" to accounts)))
                 } catch (e: Exception) {
                     logger.error("Erro ao renderizar template: ${e.message}", e)
                     call.respondText("Erro ao carregar o template: ${e.message}")
@@ -96,9 +169,59 @@ fun Application.configureTemplating() {
             }
 
             get("/levantamentos") {
+                val principal = call.principal<JWTPrincipal>()
+                val email = principal?.getClaim("email", String::class)
+
+                if (email == null) {
+                    call.respondRedirect("/login")
+                    return@get
+                }
+
                 try {
-                    logger.info("Tentar renderizar o template levantamentos")
-                    call.respond(ThymeleafContent("levantamentos", mapOf()))
+                    val person = personRepository.findByEmail(email)
+
+                    if (person == null) {
+                        call.respondRedirect("/login")
+                        return@get
+                    }
+
+                    val client = clientRepository.findByPersonId(person.id!!)
+
+                    val accounts = client?.id?.let { clientId ->
+                        accountRepository.getAccountsByPrimaryHolder(clientId)
+                    } ?: emptyList()
+
+                    call.respond(ThymeleafContent("levantamentos", mapOf("accounts" to accounts)))
+                } catch (e: Exception) {
+                    logger.error("Erro ao renderizar template: ${e.message}", e)
+                    call.respondText("Erro ao carregar o template: ${e.message}")
+                }
+            }
+
+            get("/depositos") {
+                val principal = call.principal<JWTPrincipal>()
+                val email = principal?.getClaim("email", String::class)
+
+                if (email == null) {
+                    call.respondRedirect("/login")
+                    return@get
+                }
+
+                try {
+                    val person = personRepository.findByEmail(email)
+
+                    if (person == null) {
+                        call.respondRedirect("/login")
+                        return@get
+                    }
+
+                    val client = clientRepository.findByPersonId(person.id!!)
+
+                    val accounts = client?.id?.let { clientId ->
+                        accountRepository.getAccountsByPrimaryHolder(clientId)
+                    } ?: emptyList()
+
+                    call.respond(ThymeleafContent("depositos", mapOf("accounts" to accounts)))
                 } catch (e: Exception) {
                     logger.error("Erro ao renderizar template: ${e.message}", e)
                     call.respondText("Erro ao carregar o template: ${e.message}")
@@ -127,6 +250,3 @@ fun Application.configureTemplating() {
         }
     }
 }
-
-
-

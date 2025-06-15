@@ -228,10 +228,10 @@
   <div class="resultados" th:if="${clientes != null}">
     <h2>Resultados:</h2>
     <ul>
-      <li th:each="cliente : ${clientes}">
-        <span th:text="${cliente.nome}">Nome Cliente</span>
+      <li th:each="client : ${clientes}">
+        <span th:text="${client.nome}">Nome Cliente</span>
         <a
-                th:href="@{/funcionario/cliente/{id}(id=${cliente.id})}"
+                th:href="@{/funcionario/client/{id}(id=${client.id})}"
                 class="ver"
         >Ver</a
         >

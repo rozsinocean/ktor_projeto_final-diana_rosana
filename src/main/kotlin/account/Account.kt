@@ -1,9 +1,9 @@
-package com.rosana_diana.entity
+package com.rosana_diana.account // Ajuste o pacote
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Conta (
+data class Account(
         val id_account: Int? = null,
         val iban: String,
         val balance: Double,
@@ -12,4 +12,3 @@ data class Conta (
         val opening_date: String,
         val id_accountType: Int,
 )
-

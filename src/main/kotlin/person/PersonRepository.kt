@@ -3,10 +3,8 @@ package com.rosana_diana.person
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
-import kotlin.text.insert
 
 class PersonRepository : PersonInterface {
-
     override fun allPerson(): List<Person> = transaction {
         PersonTable.selectAll().map {
             it.toPerson() // Use the toPerson extension function
@@ -33,7 +31,7 @@ class PersonRepository : PersonInterface {
             } get PersonTable.id
         }
 
-        return getPersonById(insertedId!!)!!
+        return getPersonById(insertedId)!!
     }
 
     override fun updatePerson(person: Person): Person? = transaction {

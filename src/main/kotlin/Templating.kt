@@ -60,23 +60,17 @@ fun Application.configureTemplating() {
 
         authenticate("auth-jwt") {
             get("/") {
-                logger.info("DEBUG: Entrou na rota / protegida.")
                 val principal = call.principal<JWTPrincipal>()
                 val email = principal?.getClaim("email", String::class)
-                logger.info("DEBUG: Principal email: $email")
 
                 if (email == null) {
-                    logger.warn("DEBUG: Email nulo na rota / mesmo após autenticação. Redirecionando para login.")
-                    call.respondRedirect("/login") // Garante que redireciona se o email for nulo aqui
+                    call.respondRedirect("/login")
                     return@get
                 }
 
                 try {
-                    logger.info("DEBUG: Preparando para renderizar o template index.")
                     call.respond(ThymeleafContent("index", mapOf("userEmail" to email)))
-                    logger.info("DEBUG: Chamada a respond(ThymeleafContent) executada.")
                 } catch (e: Exception) {
-                    logger.error("DEBUG: Erro ao renderizar template index: ${e.message}", e)
                     call.respond(HttpStatusCode.InternalServerError, "Erro ao carregar a página principal: ${e.message}")
                 }
             }

@@ -2,6 +2,8 @@ package com.rosana_diana
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.rosana_diana.client.Client
+import com.rosana_diana.client.ClientRepository
 import com.rosana_diana.person.Person
 import com.rosana_diana.person.PersonRepository
 import io.ktor.http.*
@@ -16,6 +18,7 @@ import java.util.Date
 
 fun Application.configureRouting() {
     val personRepository = PersonRepository()
+    val clientRepository = ClientRepository()
 
     routing {
         authenticate("auth-jwt") {
@@ -52,7 +55,13 @@ fun Application.configureRouting() {
                         address = address,
                         birthdate = birthdate.toString()
                     )
-                    personRepository.createPerson(newPerson)
+
+                    val createdPerson = personRepository.createPerson(newPerson)
+
+                    if (createdPerson.id != null) {
+                        val newClient = Client(id = 0, personId = createdPerson.id)
+                        clientRepository.createClient(newClient)
+                    }
 
                     call.respond(
                         ThymeleafContent(

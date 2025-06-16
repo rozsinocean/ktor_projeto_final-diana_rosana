@@ -189,22 +189,23 @@
 </head>
 <body>
 
-<!-- Barra lateral conforme solicitado -->
+<!-- Barra lateral -->
+<!-- Barra -->
 <div class="sidebar">
   <h2><i class="fa-solid fa-building-columns"></i> Banco</h2>
   <ul>
-    <li><button class="sidebar-button" onclick="window.location.href='/'"><i class="fa-solid fa-gauge"></i> Início</button></li>
-    <li><button class="sidebar-button" onclick="window.location.href='/transferencias'"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</button></li>
-    <li><button class="sidebar-button" onclick="window.location.href='/levantamentos'"><i class="fa-solid fa-money-bill-wave"></i> Levantamentos</button></li>
-    <li><button class="sidebar-button" onclick="window.location.href='/depositos'"><i class="fa-solid fa-piggy-bank"></i> Depósitos</button></li>
-  </ul>
-  <ul>
-    <li><button class="sidebar-button" onclick="window.location.href='/perfil'"><i class="fa-solid fa-user"></i> O meu perfil</button></li>
-    <li><button class="sidebar-button" onclick="window.location.href='/definicoes'"><i class="fa-solid fa-gear"></i> Definições</button></li>
+    <li><a href="/dashboard_funcionario"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+    <li><a href="/registo_cliente"><i class="fa-solid fa-user-plus"></i> Novo Cliente</a></li>
+    <li><a href="/pesquisar_cliente"><i class="fa-solid fa-users"></i> Procurar Clientes</a></li>
+    <li><a href="/transferencias"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</a></li>
+    <li><a href="/levantamentos_funcionario"><i class="fa-solid fa-money-bill-wave"></i> Levantamentos</a></li>
+    <li><a href="/depositos"><i class="fa-solid fa-piggy-bank"></i> Depósitos</a></li>
   </ul>
 
   <div class="logout">
-    <a href="/login"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a>
+    <a href="/login">
+      <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+    </a>
   </div>
 </div>
 

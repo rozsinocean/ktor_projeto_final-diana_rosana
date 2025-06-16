@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pesquisar Cliente</title>
+  <title>Registo de Novo Cliente</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     * {
@@ -13,7 +13,7 @@
 
     body {
       font-family: "Tahoma", "Verdana", sans-serif;
-      background-color: #f3f4f6;
+      background-color: #e5e7eb;
       display: flex;
       min-height: 100vh;
     }
@@ -95,94 +95,72 @@
       color: red;
     }
 
+    /* FORM MAIN AREA */
     .main {
       flex: 1;
-      padding: 60px;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
 
-    h1 {
-      color: #db4848;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    form {
-      max-width: 500px;
-      margin: 0 auto;
+    .container {
+      width: 100%;
+      max-width: 800px;
       background: white;
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #DB4848;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin-bottom: 8px;
       font-weight: bold;
-      color: #333;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      background-color: #f9f9f9;
-    }
-
-    button {
-      background-color: #db4848;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    button:hover {
-      background-color: #c43131;
-    }
-
-    .resultados {
-      max-width: 700px;
-      margin: 40px auto 0;
-    }
-
-    .resultados h2 {
-      margin-bottom: 20px;
+      margin-bottom: 6px;
       color: #444;
     }
 
-    .resultados ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .resultados li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: white;
-      padding: 15px 20px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
-    }
-
-    .resultados .ver {
-      background-color: #db4848;
-      color: white;
-      padding: 8px 14px;
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
       border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
+      background-color: #f0f0f0;
     }
 
-    .resultados .ver:hover {
-      background-color: #c43131;
+    .form-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    button {
+      background-color: #DB4848;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      display: block;
+      margin: 30px auto 0;
+    }
+
+    button:hover {
+      background-color: #ff0000;
     }
   </style>
 </head>
@@ -192,7 +170,8 @@
 <div class="sidebar">
   <h2><i class="fa-solid fa-building-columns"></i> Banco</h2>
   <ul>
-    <li><a href="/dashboard_funcionario"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+    <li><a href="/"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+    <li><a href="/registo_funcionario"><i class="fa-solid fa-user-plus"></i> Novo Funcionario</a></li>
     <li><a href="/registo_cliente"><i class="fa-solid fa-user-plus"></i> Novo Cliente</a></li>
     <li><a href="/pesquisar_cliente"><i class="fa-solid fa-users"></i> Procurar Clientes</a></li>
     <li><a href="/transferencias"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</a></li>
@@ -206,34 +185,63 @@
     </a>
   </div>
 </div>
-<!-- Conteúdo principal -->
+
+<!-- Formulário -->
 <div class="main">
-  <h1>Pesquisar Cliente</h1>
+  <div class="container">
+    <h2>Registo de Novo Funcionário</h2>
+    <form action="/registo_cliente" method="post">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Nome Completo</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="nif">NIF</label>
+          <input type="text" id="nif" name="nif" maxlength="9" pattern="\d{9}" required>
+        </div>
+      </div>
 
-  <form action="/funcionario/pesquisar-cliente" method="get">
-    <label for="nome">Nome do Cliente</label>
-    <input type="text" id="nome" name="nome" placeholder=" " />
+      <div class="form-row">
+        <div class="form-group">
+          <label for="birthdate">Data de Nascimento</label>
+          <input type="date" id="birthdate" name="birthdate" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="text" id="password" name="password" required>
+        </div>
+      </div>
 
-    <label for="nif">NIF / Email</label>
-    <input type="text" id="nif" name="nif" placeholder=" " />
+      <div class="form-group">
+        <label for="address">Morada Completa</label>
+        <input type="text" id="address" name="address" required>
+      </div>
 
-    <button type="submit">Procurar</button>
-  </form>
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" required>
+      </div>
 
-  <!-- Resultados de pesquisa -->
-  <div class="resultados" th:if="${clientes != null}">
-    <h2>Resultados:</h2>
-    <ul>
-      <li th:each="client : ${clientes}">
-        <span th:text="${client.nome}">Nome Cliente</span>
-        <a
-                th:href="@{/funcionario/client/{id}(id=${client.id})}"
-                class="ver"
-        >Ver</a
-        >
-      </li>
-    </ul>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gender">Género</label>
+          <select id="gender" name="gender" required>
+            <option value="">-- select --</option>
+            <option value="homem">Masculino</option>
+            <option value="mulher">Feminino</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="phone">Telemóvel</label>
+          <input type="text" id="phone" name="phone" required>
+        </div>
+      </div>
+
+      <button type="submit">Registar Funcionário</button>
+    </form>
   </div>
 </div>
+
 </body>
 </html>

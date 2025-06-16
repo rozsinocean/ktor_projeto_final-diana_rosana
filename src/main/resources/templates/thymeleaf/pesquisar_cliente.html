@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pesquisar Cliente</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Tahoma", "Verdana", sans-serif;
+      background-color: #f3f4f6;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: white;
+      border-right: 1px solid #ddd;
+      height: auto; /* Altura da viewport */
+      padding: 24px;
+      display: flex;          /* Flex container vertical */
+      flex-direction: column; /* Coloca elementos em coluna */
+    }
+
+    .sidebar h2 {
+      font-size: 22px;
+      margin-bottom: 24px;
+      color: #e53935;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      margin: 16px 0;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+    }
+
+    .sidebar ul li a i {
+      margin-right: 10px;
+      color: #DB4848;
+      font-size: 18px;
+    }
+
+    /* Badge ao lado do texto */
+    .sidebar ul li a .badge {
+      background: #DB4848;
+      color: white;
+      font-size: 12px;
+      border-radius: 12px;
+      padding: 2px 7px;
+      font-weight: bold;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* o logout vai para baixo */
+    .logout {
+      margin-top: auto; /* empurra para o fim da sidebar */
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+
+    .logout a  {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px 0;
+    }
+
+    .logout a:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .logout i {
+      color: red;
+    }
+
+    .main {
+      flex: 1;
+      padding: 60px;
+    }
+
+    h1 {
+      color: #db4848;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+    }
+
+    button {
+      background-color: #db4848;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #c43131;
+    }
+
+    .resultados {
+      max-width: 700px;
+      margin: 40px auto 0;
+    }
+
+    .resultados h2 {
+      margin-bottom: 20px;
+      color: #444;
+    }
+
+    .resultados ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .resultados li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .resultados .ver {
+      background-color: #db4848;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .resultados .ver:hover {
+      background-color: #c43131;
+    }
+
+    .profile-details-card {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .profile-details-card h2 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .profile-details-card table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .profile-details-card table td {
+      padding: 12px 0;
+      vertical-align: top;
+      font-size: 16px;
+      color: #555;
+    }
+
+    .profile-details-card table td:first-child {
+      width: 150px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .profile-details-card table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .profile-details-card table tr:not(:last-child) td {
+      border-bottom: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Barra -->
+<div class="sidebar">
+  <h2><i class="fa-solid fa-building-columns"></i> Banco</h2>
+  <ul>
+    <li><a href="/"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+    <li><a href="/registo_funcionario"><i class="fa-solid fa-user-plus"></i> Novo Funcionario</a></li>
+    <li><a href="/registo_cliente"><i class="fa-solid fa-user-plus"></i> Novo Cliente</a></li>
+    <li><a href="/pesquisar_cliente"><i class="fa-solid fa-users"></i> Procurar Clientes</a></li>
+    <li><a href="/transferencias"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</a></li>
+    <li><a href="/levantamentos"><i class="fa-solid fa-money-bill-wave"></i> Levantamentos</a></li>
+    <li><a href="/depositos"><i class="fa-solid fa-piggy-bank"></i>Depósitos</a></li>
+  </ul>
+
+  <div class="logout">
+    <a href="/login">
+      <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+    </a>
+  </div>
+</div>
+<!-- Conteúdo principal -->
+<div class="main">
+  <h1>Pesquisar Cliente</h1>
+
+  <form action="/pesquisar_cliente" method="post">
+    <label for="email">Email do Cliente</label>
+    <input type="text" id="email" name="email" placeholder=" " />
+
+    <label for="nif">NIF</label>
+    <input type="text" id="nif" name="nif" placeholder=" " />
+
+    <button type="submit">Procurar</button>
+  </form>
+
+  <!-- Resultados de pesquisa -->
+  <div class="resultados" th:if="${person != null}">
+    <h2>Resultados:</h2>
+    <div class="profile-details-card" th:each="person : ${person}">
+      <h2>Detalhes da Pessoa</h2>
+      <table>
+        <tbody>
+        <tr>
+          <td><strong>ID:</strong></td>
+          <td th:text="${person.id}">1</td>
+        </tr>
+        <tr>
+          <td><strong>Nome:</strong></td>
+          <td th:text="${person.name}">Nome do Utilizador</td>
+        </tr>
+        <tr>
+          <td><strong>Data de Nascimento:</strong></td>
+          <td th:text="${person.birthdate}">YYYY-MM-DD</td>
+        </tr>
+        <tr>
+          <td><strong>Género:</strong></td>
+          <td th:text="${person.gender}">Gênero</td>
+        </tr>
+        <tr>
+          <td><strong>Email:</strong></td>
+          <td th:text="${person.email}">email@example.com</td>
+        </tr>
+        <tr>
+          <td><strong>NIF:</strong></td>
+          <td th:text="${person.nif}">123456789</td>
+        </tr>
+        <tr>
+          <td><strong>Telefone:</strong></td>
+          <td th:text="${person.phone}">912345678</td>
+        </tr>
+        <tr>
+          <td><strong>Morada:</strong></td>
+          <td th:text="${person.address}">Rua Exemplo, 123</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

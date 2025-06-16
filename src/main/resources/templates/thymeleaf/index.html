@@ -64,23 +64,23 @@
         </div>
 
         <!-- Últimas transações -->
-         <div class="box">
-          <h3>Últimas transações</h3>
-             <ul>
-                 <li th:each="transaction : ${transactions}">
-                     <div class="info" style="display: flex; align-items: center; gap: 12px;">
-                         <!-- Avatar letra inicial -->
-                         <div class="avatar-circle" th:text="${transaction.description != null && transaction.description.length() > 0 ? transaction.description.substring(0,1).toUpperCase() : '?'}"></div>
-                         <div>
-                             <b th:text="${transaction.description} ?: 'Sem descrição'">Descrição</b><br>
-                             <small th:text="${transaction_datetime}">Data e hora</small>
-                         </div>
-                     </div>
-                     <span th:text="${transaction.amount} + ' EUR'">Montante</span>
-                 </li>
-             </ul>
+        <div class="box">
+            <h3>Últimas transações</h3>
+            <ul class="transactions">
+                <li th:each="transaction : ${transactions}">
+                    <div class="info">
+                        <div class="avatar-circle" th:text="${transaction.description != null && transaction.description.length() > 0 ? transaction.description.substring(0,1).toUpperCase() : '?'}"></div>
+                        <div class="transaction-text">
+                            <b th:text="${transaction.description} ?: 'Sem descrição'">Descrição</b><br>
+                            <small th:text="${transaction.transaction_datetime != null ? transaction.transaction_datetime.substring(8,10) + '/' + transaction.transaction_datetime.substring(5,7) + ' ' + transaction.transaction_datetime.substring(11,16) : 'Data indisponível'}">Data e hora</small>
+                        </div>
+                        <span th:text="${#numbers.formatDecimal(transaction.amount, 2, 2)} + ' EUR'">Montante</span>
+                </li>
+            </ul>
         </div>
-    <script>
+
+
+        <script>
         // Script para controlar o carrossel
 
         const track = document.querySelector(".carousel-track");

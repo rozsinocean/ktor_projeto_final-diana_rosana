@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Fazer Depósito</title>
+    <title>O meu perfil</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
@@ -19,7 +19,7 @@
             min-height: 100vh;
         }
 
-        /* Sidebar */
+        /* Sidebar mantém-se igual */
         .sidebar {
             width: 250px;
             background-color: white;
@@ -90,84 +90,74 @@
             color: red;
         }
 
-        /* Main overlay */
-        .main {
-            flex: 1;
-            position: relative;
-            background-color: rgba(0, 0, 0, 0.4);
+        /* Apenas alterações para main-content */
+        .main-content {
+            flex: 1; /* ocupa o espaço restante */
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
+            align-items: center; /* centraliza horizontalmente o conteúdo */
+            padding: 40px 20px;
+            overflow-y: auto;
         }
 
-        .modal {
-            background-color: white;
-            border-radius: 12px;
-            padding: 50px;
-            width: 450px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        h2 {
-            margin-top: 0;
-            font-size: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            background-color: #e5e7eb;
-            border: none;
-            border-radius: 6px;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-
-        .btn-confirmar {
-            background-color: #DB4848;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .btn-cancelar {
-            background-color: white;
-            color: black;
-            border: 1px solid #ccc;
-            padding: 10px 20px;
-            border-radius: 6px;
-            text-decoration: none;
+        .header h1 {
+            margin-bottom: 30px;
+            color: #333;
             text-align: center;
+            width: 100%;
+            max-width: 800px;
         }
 
-        .actions-debug {
-            font-size: 12px;
+        .profile-details-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .profile-details-card h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .profile-details-card table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .profile-details-card table td {
+            padding: 12px 0;
+            vertical-align: top;
+            font-size: 16px;
             color: #555;
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
         }
 
-        .actions-debug span {
-            cursor: pointer;
-            text-decoration: underline;
+        .profile-details-card table td:first-child {
+            width: 150px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .profile-details-card table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .profile-details-card table tr:not(:last-child) td {
+            border-bottom: 1px solid #eee;
+        }
+        a {
+            color: black;
+            text-decoration: none;
+        }
+        .red {
+            color: #DB4848;
         }
     </style>
 </head>
@@ -178,23 +168,29 @@
     <div>
         <h3>Contas & Movimentos</h3>
         <ul>
-            <li><button class="sidebar-button" onclick="window.location.href='/'">Início</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/transferencias'">Transferências</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/levantamentos'">Levantamentos</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/depositos'">Depósitos</button></li>
+            <li><a href="/" class="red">Início</a></li>
+            <li><a href="/levantamentos">Levantamentos</a></li>
+            <li><a href="/transferencias">Transferências</a></li>
+            <li><a href="/depositos">Depósitos</a></li>
+            <li><a href="/suporte">Suporte</a></li>
         </ul>
+
         <h3>Área pessoal</h3>
         <ul>
-            <li><button class="sidebar-button" onclick="window.location.href='/perfil'">O meu perfil</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/definicoes'">Definições</button></li>
+            <li><a href="/omeuperfil" class="red">O meu perfil</a></li>
+
         </ul>
-    </div>
-    <div class="logout">
-        <a href="/login"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a>
+
+        <div class="logout">
+            <a href="/login">
+                <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+            </a>
+        </div>
+
     </div>
 </div>
 
-<!-- Modal Overlay Content -->
+<!-- Main content -->
 <div class="main-content">
     <div class="header">
         <h1>O Meu Perfil</h1>
@@ -232,72 +228,27 @@
                 <td><strong>Telefone:</strong></td>
                 <td th:text="${person.phone}">912345678</td>
             </tr>
+            <tr>
                 <td><strong>Morada:</strong></td>
-                <td th:text="${person.address}">Rua Exemplo, 123</td> </tr>
+                <td th:text="${person.address}">Rua Exemplo, 123</td>
+            </tr>
             </tbody>
         </table>
     </div>
 
     <div class="profile-details-card">
         <h2>Minhas Contas</h2>
-        <ul th:if="${!accounts.isEmpty()}"> <li th:each="account : ${accounts}">
-            <span class="account-type" th:text="${accountTypesMap.get(account.id_accountType)}">Tipo de Conta</span>
-            <span class="account-iban" th:text="${account.iban}">PT5000000000000000000000000</span>
-        </li>
+        <ul th:if="${!accounts.isEmpty()}">
+            <li th:each="account : ${accounts}">
+                <span class="account-type" th:text="${accountTypesMap.get(account.id_accountType)}">Tipo de Conta</span>
+                <span class="account-iban" th:text="${account.iban}">PT5000000000000000000000000</span>
+            </li>
         </ul>
         <div th:if="${accounts.isEmpty()}">
             <p>Nenhuma conta encontrada para este cliente.</p>
         </div>
     </div>
 </div>
-
-<style>
-    /* ... seus estilos existentes ... */
-
-    .profile-details-card {
-        background-color: white;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-    }
-
-    .profile-details-card h2 {
-        font-size: 24px;
-        color: #333;
-        margin-bottom: 20px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 10px;
-    }
-
-    .profile-details-card table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
-
-    .profile-details-card table td {
-        padding: 12px 0;
-        vertical-align: top;
-        font-size: 16px;
-        color: #555;
-    }
-
-    .profile-details-card table td:first-child {
-        width: 150px; /* Largura para os labels */
-        font-weight: bold;
-        color: #333;
-    }
-
-    .profile-details-card table tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    /* Adicione uma borda inferior para separar as linhas */
-    .profile-details-card table tr:not(:last-child) td {
-        border-bottom: 1px solid #eee;
-    }
-</style>
 
 </body>
 </html>

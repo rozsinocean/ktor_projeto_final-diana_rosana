@@ -7,6 +7,7 @@ import com.rosana_diana.account.AccountRepository
 import com.rosana_diana.accounttype.AccountTypeRepository
 import com.rosana_diana.client.Client
 import com.rosana_diana.client.ClientRepository
+import com.rosana_diana.employee.Employee
 import com.rosana_diana.employee.EmployeeRepository
 import com.rosana_diana.person.Person
 import com.rosana_diana.person.PersonRepository
@@ -28,7 +29,7 @@ import org.mindrot.jbcrypt.BCrypt
 import java.time.LocalDate
 import java.util.Date
 
-fun Application.configureRouting() {
+ fun Application.configureRouting() {
     val personRepository = PersonRepository()
     val clientRepository = ClientRepository()
     val employeeRepository = EmployeeRepository()
@@ -91,6 +92,78 @@ fun Application.configureRouting() {
                         )
 
                         accountRepository.createAccount(newAccount)
+                    }
+
+                    call.respond(
+                        ThymeleafContent(
+                            "registo_cliente", mapOf(
+                                "message" to "Registro efetuado com sucesso para $name (${email})."
+                            )
+                        )
+                    )
+                } catch (e: Exception) {
+                    if (e.message?.contains("unique constraint") == true) {
+                        call.respond(
+                            ThymeleafContent(
+                                "registo_cliente", mapOf("error" to "O Email ou NIF fornecido já está registrado.")
+                            )
+                        )
+                    } else {
+                        call.respond(
+                            ThymeleafContent(
+                                "registo_cliente", mapOf("error" to "Erro inesperado: ${e.localizedMessage}")
+                            )
+                        )
+                    }
+                }
+            }
+
+            post("/registo_funcionario") {
+                val params = call.receiveParameters()
+
+                val name = params["name"] ?: ""
+                val email = params["email"] ?: ""
+                val password = params["password"] ?: ""
+                val nif = params["nif"]?.toIntOrNull()
+                val gender = params["gender"] ?: ""
+                val phone = params["phone"]
+                val address = params["address"]
+                val birthdate = params["birthdate"]?.let { LocalDate.parse(it) }
+
+                if (name.isBlank() || email.isBlank() || password.isBlank() || nif == null || gender.isBlank() || birthdate == null) {
+                    call.respond(
+                        ThymeleafContent(
+                            "registo_cliente", mapOf("error" to "Todos os campos obrigatórios devem ser preenchidos.")
+                        )
+                    )
+                    return@post
+                }
+
+                try {
+                    val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
+                    val newPerson = Person(
+                        name = name,
+                        email = email,
+                        password = hashedPassword,
+                        nif = nif,
+                        gender = gender,
+                        phone = phone,
+                        address = address,
+                        birthdate = birthdate.toString()
+                    )
+
+                    val createdPerson = personRepository.createPerson(newPerson)
+
+                    val admissionDate = LocalDate.now()
+                    if (createdPerson.id != null) {
+                        val newEmployee = Employee(
+                            id = 0, personId = createdPerson.id,
+                            admissionDate = admissionDate.toString(),
+                            salary = 0.0,
+                            idPosition = "1"
+                        )
+
+                        employeeRepository.createEmployee(newEmployee)
                     }
 
                     call.respond(
@@ -192,6 +265,44 @@ fun Application.configureRouting() {
                             "transferencias", mapOf(
                                 "message" to "Transferencia efetuado com sucesso do iban de origem (${sourceIban}) para iban (${destinationIban})."
                             )
+                        )
+                    )
+                } catch (e: TransactionService.TransactionServiceException) {
+                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Erro na transferência.")
+                } catch (e: Exception) {
+                    application.log.error("Erro inesperado ao realizar transferência:", e)
+                    call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado ao processar a transferência.")
+                }
+            }
+
+            post("/pesquisar_cliente") {
+                val params = call.receiveParameters()
+                val email = params["email"]
+                val nif = params["nif"]
+
+                if (email == null || nif == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Dados inválidos.")
+                    return@post
+                }
+
+                try {
+                    val person = personRepository.findByEmail(email)
+                    if (person == null || person.nif.toString() != nif) {
+                        call.respond(HttpStatusCode.BadRequest, "Dados inválidos.")
+                        return@post
+                    }
+
+                    val client = clientRepository.findByPersonId(person.id!!)
+                    if (client == null) {
+                        call.respond(HttpStatusCode.BadRequest, "Pessoa,não é um cliente.")
+                        return@post
+                    }
+
+                    val data = mutableMapOf<String, Any>("person" to person)
+
+                    call.respond(
+                        ThymeleafContent(
+                            "pesquisar_cliente", data
                         )
                     )
                 } catch (e: TransactionService.TransactionServiceException) {

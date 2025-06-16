@@ -185,42 +185,42 @@
         <h1 th:text="'Bem-vindo, ' + ${person.name}">Bem-vindo, [Nome do Usuário]</h1>
         <p>Último login: 14/06/2025 às 10:42</p>
 
-    <!-- Cartões bonitos e interativos -->
-    <div class="cards">
-        <div class="card">
-            <h3>Total de Clientes</h3>
-            <p th:text="${numberOfClients}">2456</p> </div>
-        <div class="card">
-            <h3>Contas Ativas</h3>
-            <p th:text="${numberOfAccounts}"></p> </div>
-        <div class="card">
-            <h3>Transferências Pendentes</h3>
-            <p></p> <a href="#" class="button">Ver todas</a>
+        <!-- Cartões bonitos e interativos -->
+        <div class="cards">
+            <div class="card">
+                <h3>Total de Clientes</h3>
+                <p th:text="${numberOfClients}">2456</p> </div>
+            <div class="card">
+                <h3>Contas Ativas</h3>
+                <p th:text="${numberOfAccounts}"></p> </div>
+            <div class="card">
+                <h3>Transferências Pendentes</h3>
+                <p></p> <a href="#" class="button">Ver todas</a>
+            </div>
+            <div class="card">
+                <h3>Novos Registos Hoje</h3>
+                <p></p> </div>
         </div>
-        <div class="card">
-            <h3>Novos Registos Hoje</h3>
-            <p></p> </div>
-    </div>
 
-    <!-- Mais botões -->
-    <div class="cards">
-        <div class="card">
-            <h3>Registar Novo Cliente</h3>
-            <p>Adicione um novo client ao sistema bancário.</p>
-            <a href="/novoCliente" class="button">Registar</a>
-        </div>
-        <div class="card">
-            <h3>Consultar Clientes</h3>
-            <p>Pesquisar e visualizar informações de clientes.</p>
-            <a href="/clientes" class="button">Consultar</a>
-        </div>
-        <div class="card">
-            <h3>Gerir Contas</h3>
-            <p>Abrir, editar ou encerrar contas bancárias.</p>
-            <a href="/contas" class="button">Gerir</a>
+        <!-- Mais botões -->
+        <div class="cards">
+            <div class="card">
+                <h3>Registar Novo Cliente</h3>
+                <p>Adicione um novo client ao sistema bancário.</p>
+                <a href="/novoCliente" class="button">Registar</a>
+            </div>
+            <div class="card">
+                <h3>Consultar Clientes</h3>
+                <p>Pesquisar e visualizar informações de clientes.</p>
+                <a href="/clientes" class="button">Consultar</a>
+            </div>
+            <div class="card">
+                <h3>Gerir Contas</h3>
+                <p>Abrir, editar ou encerrar contas bancárias.</p>
+                <a href="/contas" class="button">Gerir</a>
+            </div>
         </div>
     </div>
 </div>
-
 </body>
 </html>

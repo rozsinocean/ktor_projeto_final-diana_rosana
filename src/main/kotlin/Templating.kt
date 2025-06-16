@@ -72,7 +72,6 @@ fun Application.configureTemplating() {
         }
 
         authenticate("auth-jwt") {
-            // general
             get("/") {
                 val principal = call.principal<JWTPrincipal>()
                 val email = principal?.getClaim("email", String::class)
@@ -143,31 +142,35 @@ fun Application.configureTemplating() {
                 }
             }
 
-            // client
             get("/transferencias") {
                 val principal = call.principal<JWTPrincipal>()
                 val email = principal?.getClaim("email", String::class)
+                val type = principal?.getClaim("type", String::class)
 
-                if (email == null) {
+                if (email == null || type == null) {
                     call.respondRedirect("/login")
                     return@get
                 }
 
                 try {
-                    val person = personRepository.findByEmail(email)
+                    if (type == "client") {
+                        val person = personRepository.findByEmail(email)
 
-                    if (person == null) {
-                        call.respondRedirect("/login")
-                        return@get
+                        if (person == null) {
+                            call.respondRedirect("/login")
+                            return@get
+                        }
+
+                        val client = clientRepository.findByPersonId(person.id!!)
+
+                        val accounts = client?.id?.let { clientId ->
+                            accountRepository.getAccountsByPrimaryHolder(clientId)
+                        } ?: emptyList()
+
+                        call.respond(ThymeleafContent("transferencias", mapOf("accounts" to accounts)))
+                    } else {
+                        call.respond(ThymeleafContent("transferencias_funcionario", mapOf()))
                     }
-
-                    val client = clientRepository.findByPersonId(person.id!!)
-
-                    val accounts = client?.id?.let { clientId ->
-                        accountRepository.getAccountsByPrimaryHolder(clientId)
-                    } ?: emptyList()
-
-                    call.respond(ThymeleafContent("transferencias", mapOf("accounts" to accounts)))
                 } catch (e: Exception) {
                     logger.error("Erro ao renderizar template: ${e.message}", e)
                     call.respondText("Erro ao carregar o template: ${e.message}")
@@ -177,27 +180,32 @@ fun Application.configureTemplating() {
             get("/levantamentos") {
                 val principal = call.principal<JWTPrincipal>()
                 val email = principal?.getClaim("email", String::class)
+                val type = principal?.getClaim("type", String::class)
 
-                if (email == null) {
+                if (email == null || type == null) {
                     call.respondRedirect("/login")
                     return@get
                 }
 
                 try {
-                    val person = personRepository.findByEmail(email)
+                    if (type == "client") {
+                        val person = personRepository.findByEmail(email)
 
-                    if (person == null) {
-                        call.respondRedirect("/login")
-                        return@get
+                        if (person == null) {
+                            call.respondRedirect("/login")
+                            return@get
+                        }
+
+                        val client = clientRepository.findByPersonId(person.id!!)
+
+                        val accounts = client?.id?.let { clientId ->
+                            accountRepository.getAccountsByPrimaryHolder(clientId)
+                        } ?: emptyList()
+
+                        call.respond(ThymeleafContent("levantamentos", mapOf("accounts" to accounts)))
+                    } else {
+                        call.respond(ThymeleafContent("levantamentos_funcionario", mapOf()))
                     }
-
-                    val client = clientRepository.findByPersonId(person.id!!)
-
-                    val accounts = client?.id?.let { clientId ->
-                        accountRepository.getAccountsByPrimaryHolder(clientId)
-                    } ?: emptyList()
-
-                    call.respond(ThymeleafContent("levantamentos", mapOf("accounts" to accounts)))
                 } catch (e: Exception) {
                     logger.error("Erro ao renderizar template: ${e.message}", e)
                     call.respondText("Erro ao carregar o template: ${e.message}")
@@ -207,125 +215,49 @@ fun Application.configureTemplating() {
             get("/depositos") {
                 val principal = call.principal<JWTPrincipal>()
                 val email = principal?.getClaim("email", String::class)
+                val type = principal?.getClaim("type", String::class)
 
-                if (email == null) {
+                if (email == null || type == null) {
                     call.respondRedirect("/login")
                     return@get
                 }
 
                 try {
-                    val person = personRepository.findByEmail(email)
+                    if (type == "client") {
+                        val person = personRepository.findByEmail(email)
 
-                    if (person == null) {
-                        call.respondRedirect("/login")
-                        return@get
+                        if (person == null) {
+                            call.respondRedirect("/login")
+                            return@get
+                        }
+
+                        val client = clientRepository.findByPersonId(person.id!!)
+
+                        val accounts = client?.id?.let { clientId ->
+                            accountRepository.getAccountsByPrimaryHolder(clientId)
+                        } ?: emptyList()
+
+                        call.respond(ThymeleafContent("depositos", mapOf("accounts" to accounts)))
+                    } else {
+                        call.respond(ThymeleafContent("depositos_funcionario", mapOf()))
                     }
-
-                    val client = clientRepository.findByPersonId(person.id!!)
-
-                    val accounts = client?.id?.let { clientId ->
-                        accountRepository.getAccountsByPrimaryHolder(clientId)
-                    } ?: emptyList()
-
-                    call.respond(ThymeleafContent("depositos", mapOf("accounts" to accounts)))
                 } catch (e: Exception) {
                     logger.error("Erro ao renderizar template: ${e.message}", e)
                     call.respondText("Erro ao carregar o template: ${e.message}")
                 }
             }
 
-            // employee
-            get("/transferencias_funcionario") {
-                val principal = call.principal<JWTPrincipal>()
-                val email = principal?.getClaim("email", String::class)
-
-                if (email == null) {
-                    call.respondRedirect("/login")
-                    return@get
-                }
-
-                try {
-                    val person = personRepository.findByEmail(email)
-
-                    if (person == null) {
-                        call.respondRedirect("/login")
-                        return@get
-                    }
-
-                    val client = clientRepository.findByPersonId(person.id!!)
-
-                    val accounts = client?.id?.let { clientId ->
-                        accountRepository.getAccountsByPrimaryHolder(clientId)
-                    } ?: emptyList()
-
-                    call.respond(ThymeleafContent("transferencias_funcionario", mapOf("accounts" to accounts)))
-                } catch (e: Exception) {
-                    logger.error("Erro ao renderizar template: ${e.message}", e)
-                    call.respondText("Erro ao carregar o template: ${e.message}")
-                }
-            }
-
-            get("/levantamentos_funcionario") {
-                val principal = call.principal<JWTPrincipal>()
-                val email = principal?.getClaim("email", String::class)
-
-                if (email == null) {
-                    call.respondRedirect("/login")
-                    return@get
-                }
-
-                try {
-                    val person = personRepository.findByEmail(email)
-
-                    if (person == null) {
-                        call.respondRedirect("/login")
-                        return@get
-                    }
-
-                    val client = clientRepository.findByPersonId(person.id!!)
-
-                    val accounts = client?.id?.let { clientId ->
-                        accountRepository.getAccountsByPrimaryHolder(clientId)
-                    } ?: emptyList()
-
-                    call.respond(ThymeleafContent("levantamentos_funcionario", mapOf("accounts" to accounts)))
-                } catch (e: Exception) {
-                    logger.error("Erro ao renderizar template: ${e.message}", e)
-                    call.respondText("Erro ao carregar o template: ${e.message}")
-                }
-            }
-
-            get("/depositos_funcionario") {
-                val principal = call.principal<JWTPrincipal>()
-                val email = principal?.getClaim("email", String::class)
-
-                if (email == null) {
-                    call.respondRedirect("/login")
-                    return@get
-                }
-
-                try {
-                    val person = personRepository.findByEmail(email)
-
-                    if (person == null) {
-                        call.respondRedirect("/login")
-                        return@get
-                    }
-
-                    val client = clientRepository.findByPersonId(person.id!!)
-
-                    val accounts = client?.id?.let { clientId ->
-                        accountRepository.getAccountsByPrimaryHolder(clientId)
-                    } ?: emptyList()
-
-                    call.respond(ThymeleafContent("depositos_funcionario", mapOf("accounts" to accounts)))
-                } catch (e: Exception) {
-                    logger.error("Erro ao renderizar template: ${e.message}", e)
-                    call.respondText("Erro ao carregar o template: ${e.message}")
-                }
-            }
-
+            // employee specific
             get("/registo_cliente") {
+                val principal = call.principal<JWTPrincipal>()
+                val email = principal?.getClaim("email", String::class)
+                val type = principal?.getClaim("type", String::class)
+
+                if (email == null || type != "employee") {
+                    call.respondRedirect("/")
+                    return@get
+                }
+
                 try {
                     logger.info("Tentar renderizar o template Registo de Cliente Novo")
                     call.respond(ThymeleafContent("registo_cliente", mapOf()))
@@ -336,6 +268,15 @@ fun Application.configureTemplating() {
             }
 
             get("/pesquisar_Cliente") {
+                val principal = call.principal<JWTPrincipal>()
+                val email = principal?.getClaim("email", String::class)
+                val type = principal?.getClaim("type", String::class)
+
+                if (email == null || type != "employee") {
+                    call.respondRedirect("/")
+                    return@get
+                }
+
                 try {
                     logger.info("Tentar renderizar o template pesquisar cliente")
                     call.respond(ThymeleafContent("pesquisar_CLiente", mapOf()))

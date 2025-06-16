@@ -247,6 +247,46 @@ fun Application.configureTemplating() {
                 }
             }
 
+            //client specific
+            get("/omeuperfil") {
+                val principal = call.principal<JWTPrincipal>()
+                val email = principal?.getClaim("email", String::class)
+                val type = principal?.getClaim("type", String::class)
+
+                if (email == null || type != "client") {
+                    call.respondRedirect("/")
+                    return@get
+                }
+
+                try {
+                    val person = personRepository.findByEmail(email)
+
+                    if (person == null) {
+                        call.respondRedirect("/login")
+                        return@get
+                    }
+                    val client = clientRepository.findByPersonId(person.id!!)
+
+                    val accounts = client?.id?.let { clientId ->
+                        accountRepository.getAccountsByPrimaryHolder(clientId)
+                    } ?: emptyList()
+
+                    val allAccountTypes = accountTypeRepository.allAccountTypes()
+                    val accountTypesMap = allAccountTypes.associate { it.id to it.name }
+
+                    val data = mutableMapOf(
+                        "person" to person,
+                        "accounts" to accounts,
+                        "accountTypesMap" to accountTypesMap
+                    )
+
+                    call.respond(ThymeleafContent("omeuperfil", data.toMap()))
+                } catch (e: Exception) {
+                    logger.error("Erro ao renderizar template: ${e.message}", e)
+                    call.respondText("Erro ao carregar o template: ${e.message}")
+                }
+            }
+
             // employee specific
             get("/registo_cliente") {
                 val principal = call.principal<JWTPrincipal>()

@@ -182,6 +182,7 @@
             <li><a href="/levantamentos">Levantamentos</a></li>
             <li><a href="/transferencias">Transferências</a></li>
             <li><a href="/depositos">Depósitos</a></li>
+            <li><a href="/suporte">Suporte</a></li>
         </ul>
 
         <h3>Área pessoal</h3>
@@ -208,8 +209,8 @@
         <form action="/depositos" method="post">
 
             <div class="form-group">
-                <label for="accountIban">Selecionar Conta</label>
-                <select id="accountIban" name="accountIban" required>
+                <label for="iban">Selecionar Conta</label>
+                <select id="iban" name="iban" required>
                     <option value="">-- Selecione uma conta --</option>
                     <option th:each="account : ${accounts}" th:value="${account.iban}"
                             th:text="(${

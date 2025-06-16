@@ -18,6 +18,7 @@
                 <li><a href="/levantamentos">Levantamentos</a></li>
                 <li><a href="/transferencias">Transferências</a></li>
                 <li><a href="/depositos">Depósitos</a></li>
+                <li><a href="/suporte">Suporte</a></li>
             </ul>
 
             <h3>Área pessoal</h3>
@@ -65,62 +66,56 @@
         <!-- Últimas transações -->
          <div class="box">
           <h3>Últimas transações</h3>
-          <ul class="transactions">
-            <li>
-              <div class="info">
-                <div class="avatar"><img src="/static/img/img1.jpg"></div>
-                <div>
-                  <b>Mulher das Notícias</b><br>
-                  <small>17/04 23:09</small>
-                </div>
-              </div>
-              <span>24,78 EUR</span>
-            </li>
-
-            <hr style="border: 1px solid #ccc; margin: 20px 0;">
-
-            <li>
-              <div class="info">
-                <div class="avatar"><img src="/static/img/img2.jpg"></div>
-                <div>
-                  <b>Elon Muska</b><br>
-                  <small>21/05 12:32</small>
-                </div>
-              </div>
-              <span>2924,02 EUR</span>
-            </li>
-          </ul>
+             <ul>
+                 <li th:each="transaction : ${transactions}">
+                     <div class="info" style="display: flex; align-items: center; gap: 12px;">
+                         <!-- Avatar letra inicial -->
+                         <div class="avatar-circle" th:text="${transaction.description != null && transaction.description.length() > 0 ? transaction.description.substring(0,1).toUpperCase() : '?'}"></div>
+                         <div>
+                             <b th:text="${transaction.description} ?: 'Sem descrição'">Descrição</b><br>
+                             <small th:text="${transaction_datetime}">Data e hora</small>
+                         </div>
+                     </div>
+                     <span th:text="${transaction.amount} + ' EUR'">Montante</span>
+                 </li>
+             </ul>
         </div>
+    <script>
+        // Script para controlar o carrossel
 
-         <!-- Património e gráfico -->
-        <div class="summary">
-      <div class="box">
-        <h3>Património Total</h3>
+        const track = document.querySelector(".carousel-track");
+        const totalAccounts = track.children.length;
+        const nextButton = document.querySelector(".carousel-button.right");
+        const prevButton = document.querySelector(".carousel-button.left");
 
-        <div class="legend">
-          <div><span class="aaa" style="background-color: orange;"></span>Poupanças e fundos</div>
-          <b>24,78 EUR</b>
-        </div>
-        
-        <div class="legend">
-          <div><span class="aaa" style="background-color: purple;"></span>Dinheiro</div>
-          <b>2924,02 EUR</b>
-        </div>
-      
+        let currentIndex = 0;
 
-      <div class="legend">
-          <div><span class="aaa" style="background-color: rgb(0, 128, 11);"></span>Mealheiro Digital</div>
-          <b>3254.68 EUR</b>
-        </div>
-      </div>
+        function updateCarousel() {
+            const width = track.children[0].getBoundingClientRect().width;
+            track.style.transform = `translateX(-${currentIndex * width}px)`;
+        }
 
-    <!-- Gráfico -->
-      <div class="box">
-        <h3>Despesas deste mês</h3>
-        <iframe src="/static/grafico.js" width="100%" height="300" style="border: none;"></iframe>
+        // NOVA FUNÇÃO PARA SALTAR PARA UMA CONTA ESPECÍFICA
+        function irParaConta(index) {
+            currentIndex = index;
+            updateCarousel();
+            // Scroll até à secção das contas
+            document.getElementById("secao-contas").scrollIntoView({ behavior: "smooth" });
+        }
 
-      </div>
-    </div>
-    </div>
+        nextButton.addEventListener("click", () => {
+            currentIndex++;
+            if (currentIndex >= totalAccounts) currentIndex = 0;
+            updateCarousel();
+        });
+
+        prevButton.addEventListener("click", () => {
+            currentIndex--;
+            if (currentIndex < 0) currentIndex = totalAccounts - 1;
+            updateCarousel();
+        });
+
+        window.addEventListener("resize", updateCarousel);
+    </script>
 </body>
 </html>

@@ -23,10 +23,10 @@
       width: 260px;
       background-color: white;
       border-right: 1px solid #ddd;
-      height: 100vh ; /* Altura da barra */
+      height: 100vh; /* Altura da viewport */
       padding: 24px;
       display: flex;          /* Flex container vertical */
-      flex-direction: column;
+      flex-direction: column; /* Coloca elementos em coluna */
     }
 
     .sidebar h2 {
@@ -71,7 +71,7 @@
 
     /* o logout vai para baixo */
     .logout {
-      margin-top: auto; /* empurra para o fim da barra */
+      margin-top: auto; /* empurra para o fim da sidebar */
       padding-top: 20px;
       border-top: 1px solid #ddd;
     }
@@ -95,7 +95,6 @@
     .logout i {
       color: red;
     }
-
 
     .modal {
       background-color: white;
@@ -170,9 +169,9 @@
     <li><a href="/dashboard_funcionario"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
     <li><a href="/registo_cliente"><i class="fa-solid fa-user-plus"></i> Novo Cliente</a></li>
     <li><a href="/pesquisar_cliente"><i class="fa-solid fa-users"></i> Procurar Clientes</a></li>
-    <li><a href="/transferencias_funcionario"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</a></li>
-    <li><a href="/levantamentos_funcionario"><i class="fa-solid fa-money-bill-wave"></i> Levantamentos</a></li>
-    <li><a href="/depositos_funcionario"><i class="fa-solid fa-piggy-bank"></i>Depósitos</a></li>
+    <li><a href="/transferencias"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</a></li>
+    <li><a href="/levantamentos"><i class="fa-solid fa-money-bill-wave"></i> Levantamentos</a></li>
+    <li><a href="/depositos"><i class="fa-solid fa-piggy-bank"></i>Depósitos</a></li>
   </ul>
 
   <div class="logout">

@@ -121,19 +121,18 @@ button {
     align-items: center;
 }
 
-.avatar {
+.avatar-circle {
     width: 40px;
     height: 40px;
-    background-color: gray;
+    background-color: #DB4848; /* cor vermelha do banco */
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
     border-radius: 50%;
-    margin-right: 12px;
-}
-
-.avatar img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
 }
 
 .summary {

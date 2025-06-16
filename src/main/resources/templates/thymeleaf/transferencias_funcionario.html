@@ -21,56 +21,63 @@
 
         /* Sidebar */
         .sidebar {
-            width: 250px;
+            width: 260px;
             background-color: white;
+            border-right: 1px solid #ddd;
+            height: 100vh; /* Altura da viewport */
             padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            display: flex;          /* Flex container vertical */
+            flex-direction: column; /* Coloca elementos em coluna */
         }
 
-        .sidebar h3 {
-            margin: 16px 0 8px;
-            font-size: 14px;
-            color: #666;
+        .sidebar h2 {
+            font-size: 22px;
+            margin-bottom: 24px;
+            color: #e53935;
         }
 
         .sidebar ul {
             list-style: none;
-            margin-bottom: 20px;
         }
 
-        .sidebar li {
-            margin: 10px 0;
-            font-size: 16px;
+        .sidebar ul li {
+            margin: 16px 0;
         }
 
-        .sidebar li:first-child {
-            color: red;
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 10px;
+            color: #DB4848;
+            font-size: 18px;
+        }
+
+        /* Badge ao lado do texto */
+        .sidebar ul li a .badge {
+            background: #DB4848;
+            color: white;
+            font-size: 12px;
+            border-radius: 12px;
+            padding: 2px 7px;
             font-weight: bold;
+            margin-left: 8px;
+            vertical-align: middle;
         }
 
-        .sidebar-button {
-            background: none;
-            border: none;
-            color: inherit;
-            font: inherit;
-            text-align: left;
-            padding: 5px 0;
-            cursor: pointer;
-        }
-
-        .sidebar-button:hover {
-            text-decoration: underline;
-        }
-
+        /* o logout vai para baixo */
         .logout {
-            margin-top: auto;
+            margin-top: auto; /* empurra para o fim da sidebar */
             padding-top: 20px;
             border-top: 1px solid #ddd;
         }
 
-        .logout a {
+        .logout a  {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -190,9 +197,9 @@
         <li><a href="/dashboard_funcionario"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
         <li><a href="/registo_cliente"><i class="fa-solid fa-user-plus"></i> Novo Cliente</a></li>
         <li><a href="/pesquisar_cliente"><i class="fa-solid fa-users"></i> Procurar Clientes</a></li>
-        <li><a href="/transferencias_funcionario"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</a></li>
-        <li><a href="/levantamentos_funcionario"><i class="fa-solid fa-money-bill-wave"></i> Levantamentos</a></li>
-        <li><a href="/depositos_funcionario"><i class="fa-solid fa-piggy-bank"></i>Depósitos</a></li>
+        <li><a href="/transferencias"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</a></li>
+        <li><a href="/levantamentos"><i class="fa-solid fa-money-bill-wave"></i> Levantamentos</a></li>
+        <li><a href="/depositos"><i class="fa-solid fa-piggy-bank"></i>Depósitos</a></li>
     </ul>
 
     <div class="logout">

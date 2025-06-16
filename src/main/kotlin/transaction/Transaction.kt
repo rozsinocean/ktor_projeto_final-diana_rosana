@@ -12,3 +12,4 @@ data class Transaction(
     val id_transaction_type: Int,
     val description: String? = null
 )
+

@@ -11,6 +11,8 @@ import com.rosana_diana.employee.EmployeeRepository
 import com.rosana_diana.person.Person
 import com.rosana_diana.person.PersonRepository
 import com.rosana_diana.person.PersonTable.email
+import com.rosana_diana.support.Support
+import com.rosana_diana.support.SupportRepository
 import com.rosana_diana.transaction.TransactionRepository
 import com.rosana_diana.transaction.TransactionService
 import com.rosana_diana.transactiontype.TransactionTypeRepository
@@ -23,6 +25,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import org.mindrot.jbcrypt.BCrypt
+import java.time.LocalDate
 import java.util.Date
 
 fun Application.configureRouting() {
@@ -31,7 +34,7 @@ fun Application.configureRouting() {
     val employeeRepository = EmployeeRepository()
     val accountRepository = AccountRepository()
     val transactionRepository = TransactionRepository()
-    val accountTypeRepository = AccountTypeRepository()
+    val supportRepository = SupportRepository()
     val transactionTypeRepository = TransactionTypeRepository()
     val transactionService = TransactionService(accountRepository, transactionRepository, transactionTypeRepository) // <--- ATUALIZAR CONSTRUTOR
 
@@ -47,7 +50,7 @@ fun Application.configureRouting() {
                 val gender = params["gender"] ?: ""
                 val phone = params["phone"]
                 val address = params["address"]
-                val birthdate = params["birthdate"]?.let { java.time.LocalDate.parse(it) }
+                val birthdate = params["birthdate"]?.let { LocalDate.parse(it) }
 
                 if (name.isBlank() || email.isBlank() || password.isBlank() || nif == null || gender.isBlank() || birthdate == null) {
                     call.respond(
@@ -84,7 +87,7 @@ fun Application.configureRouting() {
                             id_secondaryholder = null,
                             id_accountType = 1,
                             id_account = 0,
-                            opening_date = java.time.LocalDate.now().toString()
+                            opening_date = LocalDate.now().toString()
                         )
 
                         accountRepository.createAccount(newAccount)
@@ -306,6 +309,40 @@ fun Application.configureRouting() {
             )
 
             call.respondRedirect("/login")
+        }
+
+        post("/suporte") {
+            val params = call.receiveParameters()
+            val sourceEmail = params["email"]
+            val sourceDescription = params["description"]
+
+            if (sourceEmail.isNullOrBlank() || sourceDescription.isNullOrBlank()) {
+                call.respond(HttpStatusCode.BadRequest, "Dados em branco ou inválidos.")
+                return@post
+            }
+
+            try {
+                val supportData = Support(
+                    id = 0,
+                    email = sourceEmail,
+                    description = sourceDescription
+                )
+
+                supportRepository.createSupport(supportData)
+
+                call.respond(
+                    ThymeleafContent(
+                        "suporte", mapOf(
+                            "message" to "Mensagem feito com sucesso."
+                        )
+                    )
+                )
+
+                call.respond(HttpStatusCode.OK)
+            } catch (e: Exception) {
+                application.log.error("Erro inesperado:", e)
+                call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado ao fazer o envio para o suporte.")
+            }
         }
     }
 }

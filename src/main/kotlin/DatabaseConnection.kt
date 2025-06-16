@@ -5,6 +5,7 @@ import com.rosana_diana.client.ClientTable
 import com.rosana_diana.person.PersonTable
 import com.rosana_diana.accounttype.AccountTypeTable
 import com.rosana_diana.employee.EmployeeTable
+import com.rosana_diana.support.SupportTable
 import com.rosana_diana.transaction.TransactionTable
 import com.rosana_diana.transactiontype.TransactionTypeTable
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -36,6 +37,7 @@ object DatabaseFactory {
                 AccountTable,
                 TransactionTypeTable,
                 TransactionTable,
+                SupportTable,
             )
 
             if (TransactionTypeTable.selectAll().count() == 0L) {

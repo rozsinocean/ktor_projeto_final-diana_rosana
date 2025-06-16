@@ -62,6 +62,16 @@ fun Application.configureTemplating() {
             }
         }
 
+        get("/suporte") {
+            try {
+                logger.info("Tentar renderizar o template suporte")
+                call.respond(ThymeleafContent("suporte", mapOf()))
+            } catch (e: Exception) {
+                logger.error("Erro ao renderizar template: ${e.message}", e)
+                call.respondText("Erro ao carregar o template: ${e.message}")
+            }
+        }
+
         authenticate("auth-jwt") {
             get("/") {
                 val principal = call.principal<JWTPrincipal>()
@@ -130,16 +140,6 @@ fun Application.configureTemplating() {
                 } catch (e: Exception) {
                     application.log.error("Erro ao carregar a página principal:", e)
                     call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado ao carregar seus dados: ${e.message}")
-                }
-            }
-
-            get("/suporte") {
-                try {
-                    logger.info("Tentar renderizar o template suporte")
-                    call.respond(ThymeleafContent("suporte", mapOf()))
-                } catch (e: Exception) {
-                    logger.error("Erro ao renderizar template: ${e.message}", e)
-                    call.respondText("Erro ao carregar o template: ${e.message}")
                 }
             }
 

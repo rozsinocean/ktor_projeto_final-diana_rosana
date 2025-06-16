@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fazer Depósito - via Funcionário</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Tahoma, Verdana, sans-serif;
+      display: flex;
+      min-height: 100vh;
+      background-color: #e5e7eb;
+    }
+
+    /* Barra lateral igual ao último código enviado */
+    .sidebar {
+      width: 260px;
+      background-color: white;
+      border-right: 1px solid #ddd;
+      height: 100vh;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar h2 {
+      font-size: 22px;
+      margin-bottom: 24px;
+      color: #e53935;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      margin: 16px 0;
+    }
+
+    .sidebar ul li a,
+    .sidebar ul li button.sidebar-button {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+      padding: 0;
+    }
+
+    .sidebar ul li a i,
+    .sidebar ul li button.sidebar-button i {
+      margin-right: 10px;
+      color: #DB4848;
+      font-size: 18px;
+    }
+
+    /* Badge (não usado aqui, mas mantido para compatibilidade) */
+    .sidebar ul li a .badge {
+      background: #DB4848;
+      color: white;
+      font-size: 12px;
+      border-radius: 12px;
+      padding: 2px 7px;
+      font-weight: bold;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .logout {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+
+    .logout a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px 0;
+    }
+
+    .logout a:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .logout i {
+      color: red;
+    }
+
+    /* Modal estilo adaptado do último código */
+    .modal {
+      background-color: white;
+      border-radius: 12px;
+      padding: 60px;
+      width: 500px;
+      margin: auto;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    select,
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      background-color: #e5e7eb;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+
+    .btn-confirmar {
+      background-color: #db4848;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .btn-cancelar {
+      background-color: white;
+      color: black;
+      border: 1px solid #ccc;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .btn-cancelar:hover,
+    .btn-confirmar:hover {
+      filter: brightness(0.9);
+    }
+
+    /* Link para suporte */
+    .actions-debug {
+      font-size: 12px;
+      color: #555;
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .actions-debug span {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Barra lateral conforme solicitado -->
+<div class="sidebar">
+  <h2><i class="fa-solid fa-building-columns"></i> Banco</h2>
+  <ul>
+    <li><button class="sidebar-button" onclick="window.location.href='/'"><i class="fa-solid fa-gauge"></i> Início</button></li>
+    <li><button class="sidebar-button" onclick="window.location.href='/transferencias'"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</button></li>
+    <li><button class="sidebar-button" onclick="window.location.href='/levantamentos'"><i class="fa-solid fa-money-bill-wave"></i> Levantamentos</button></li>
+    <li><button class="sidebar-button" onclick="window.location.href='/depositos'"><i class="fa-solid fa-piggy-bank"></i> Depósitos</button></li>
+  </ul>
+  <ul>
+    <li><button class="sidebar-button" onclick="window.location.href='/perfil'"><i class="fa-solid fa-user"></i> O meu perfil</button></li>
+    <li><button class="sidebar-button" onclick="window.location.href='/definicoes'"><i class="fa-solid fa-gear"></i> Definições</button></li>
+  </ul>
+
+  <div class="logout">
+    <a href="/login"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a>
+  </div>
+</div>
+
+<!-- Conteúdo principal (modal) -->
+<div class="modal">
+
+  <h2>Fazer Depósito</h2>
+
+  <form action="/depositos" method="post">
+
+    <div class="form-group">
+      <label for="accountIban">Selecionar Conta</label>
+      <select id="accountIban" name="accountIban" required>
+        <option value="">-- Selecione uma conta --</option>
+        <option th:each="account : ${accounts}" th:value="${account.iban}"
+                th:text="(${
+                            (account.id_accountType == 1) ? 'Conta à Ordem' :
+                            ((account.id_accountType == 2) ? 'Conta Poupança' :
+                            ((account.id_accountType == 3) ? 'Conta Crédito' : 'Tipo de Conta Desconhecido'))
+                        })">
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="amount">Montante</label>
+      <input type="number" id="amount" name="amount" min="0" step="0.01" required>
+    </div>
+
+    <div class="buttons">
+      <button type="submit" class="btn-confirmar">Confirmar</button>
+      <a href="/" class="btn-cancelar">Cancelar</a>
+    </div>
+
+  </form>
+
+  <div class="actions-debug">
+    <span onclick="window.location.href='/suporte'">Suporte</span>
+  </div>
+
+</div>
+
+</body>
+</html>

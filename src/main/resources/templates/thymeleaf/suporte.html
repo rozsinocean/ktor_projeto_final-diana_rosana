@@ -1,40 +1,141 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Suporte</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contactar Suporte - Sistema Bancário</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-
-        body{
-            font-family:"Tahoma", "Verdana", "sans-serif";
-            background-color: #D9D9D9 /* cinza claro */
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
+        body {
+            font-family: Tahoma, Verdana, sans-serif;
+            display: flex;
+            background-color: #e5e7eb; /* cinza claro */
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sidebar h3 {
+            margin: 16px 0 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .sidebar li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .sidebar li:first-child {
+            color: red;
+            font-weight: bold;
+        }
+
+        .sidebar-button {
+            background: none;
+            border: none;
+            color: inherit;
+            font: inherit;
+            text-align: left;
+            padding: 5px 0;
+            cursor: pointer;
+        }
+
+        .sidebar-button:hover {
+            text-decoration: underline;
+        }
+
+        .logout {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .logout a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: inherit;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 10px 0;
+        }
+
+        .logout a:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .logout i {
+            color: red;
+        }
+
+        .main {
+            flex: 1;
+            padding: 50px;
+            display: flex;
+            justify-content: center; /* centralizar o formulário */
+            align-items: flex-start;
+        }
+
+
         .login-container {
-            max-width: 400px;
-            margin: 70px auto;
-            padding: 60px;
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
             border: 1px solid white;
             background-color: white;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
+        .login-container h2 {
+            margin-bottom: 30px;
+            text-align: center;
+            color: #DB4848;
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 5px;
+            font-weight: 600;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 8px;
             border: 1px solid #D9D9D9;
             background-color: #D9D9D9;
             border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
         }
 
         .btn-login {
@@ -44,49 +145,64 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            width: 40%;
-            height: 40px;
+            width: 100%;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
         }
 
         .btn-login:hover {
-            background-color: #ff0000;
+            background-color: #a83333;
         }
-
-        .p-button {
-            color: rgb(66, 79, 120);
-            margin-bottom: 1px;
-            font-size: 12px
-        }
-
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #D9D9D9;
-            background-color: #D9D9D9;
-            border-radius: 4px;
-            resize: vertical; /* permite redimensionar verticalmente */
-        }
-
     </style>
 </head>
 <body>
-<div class="login-container">
-    <h2>Contactar Suporte</h2>
-    <form action="/login" method="post">
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="text" id="email" name="email" required>
-        </div>
 
-        <div class="form-group">
-            <label for="problem">Descrição do problema (opcional)</label>
-            <textarea id="problem" name="problem" rows="5" required></textarea>
-        </div>
+<!-- Barra lateral -->
+<div class="sidebar">
+    <div>
+        <h3>Contas & Movimentos</h3>
+        <ul>
+            <li><button class="sidebar-button" onclick="window.location.href='/'">Início</button></li>
+            <li><button class="sidebar-button" onclick="window.location.href='/'">Contas</button></li>
+            <li><button class="sidebar-button" onclick="document.getElementById('patrimonio').scrollIntoView({ behavior: 'smooth' })">Património</button></li>
+            <li><button class="sidebar-button" onclick="window.location.href='/transferencias'">Transferências</button></li>
+            <li><button class="sidebar-button" onclick="window.location.href='/levantamentos'">Levantamentos</button></li>
+            <li><button class="sidebar-button" onclick="window.location.href='/depositos'">Depósitos</button></li>
+        </ul>
 
-        <br>
-        <button type="submit" class="btn-login"><b>Enviar</b></button>
-
-    </form>
+        <h3>Área pessoal</h3>
+        <ul>
+            <li>O meu perfil</li>
+            <li>Definições</li>
+        </ul>
+    </div>
+    <div class="logout">
+        <a href="/login">
+            <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+        </a>
+    </div>
 </div>
+
+<!-- Conteúdo principal -->
+<div class="main">
+    <div class="login-container">
+        <h2>Contactar Suporte</h2>
+        <form action="/login" method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" required />
+            </div>
+
+            <div class="form-group">
+                <label for="problem">Descrição do problema (opcional)</label>
+                <textarea id="problem" name="problem" rows="5" required></textarea>
+            </div>
+
+            <button type="submit" class="btn-login">Enviar</button>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fazer Levantamentos - via Funcionário </title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Tahoma, Verdana, sans-serif;
+      display: flex;
+      min-height: 100vh;
+      background-color: #e5e7eb;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: white;
+      border-right: 1px solid #ddd;
+      height: 100vh ; /* Altura da barra */
+      padding: 24px;
+      display: flex;          /* Flex container vertical */
+      flex-direction: column;
+    }
+
+    .sidebar h2 {
+      font-size: 22px;
+      margin-bottom: 24px;
+      color: #e53935;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      margin: 16px 0;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+    }
+
+    .sidebar ul li a i {
+      margin-right: 10px;
+      color: #DB4848;
+      font-size: 18px;
+    }
+
+    /* Badge ao lado do texto */
+    .sidebar ul li a .badge {
+      background: #DB4848;
+      color: white;
+      font-size: 12px;
+      border-radius: 12px;
+      padding: 2px 7px;
+      font-weight: bold;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* o logout vai para baixo */
+    .logout {
+      margin-top: auto; /* empurra para o fim da barra */
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+
+    .logout a  {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px 0;
+    }
+
+    .logout a:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .logout i {
+      color: red;
+    }
+
+
+    .modal {
+      background-color: white;
+      border-radius: 12px;
+      padding: 60px;
+      width: 500px;
+      margin: auto; /* centralizar vertical e horizontal */
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .button-grid button {
+      padding: 10px;
+      font-size: 16px;
+      background-color: #e5e7eb;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .input-other {
+      width: 96%;
+      padding: 10px;
+      background-color: #e5e7eb;
+      border: none;
+      border-radius: 6px;
+      margin-bottom: 50px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .btn-confirmar {
+      background-color: #db4848;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-cancelar {
+      background-color: white;
+      color: black;
+      border: 1px solid #ccc;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Barra -->
+<div class="sidebar">
+  <h2><i class="fa-solid fa-building-columns"></i> Banco</h2>
+  <ul>
+    <li><a href="/dashboard_funcionario"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+    <li><a href="/registo_cliente"><i class="fa-solid fa-user-plus"></i> Novo Cliente</a></li>
+    <li><a href="/pesquisar_cliente"><i class="fa-solid fa-users"></i> Procurar Clientes</a></li>
+    <li><a href="/transferencias"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transferências</a></li>
+    <li><a href="/levantamentos_funcionario"><i class="fa-solid fa-money-bill-wave"></i> Levantamentos</a></li>
+    <li><a href="/depositos"><i class="fa-solid fa-piggy-bank"></i> Depósitos</a></li>
+  </ul>
+
+  <div class="logout">
+    <a href="/login">
+      <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+    </a>
+  </div>
+</div>
+
+<div class="modal">
+
+  <h2>Fazer levantamentos</h2>
+
+  <form action="/levantamentos" method="post" id="withdrawForm">
+
+    <div class="form-group">
+      <label for="iban">Selecionar Conta</label>
+      <select id="iban" name="iban" required>
+        <option value="">-- Selecione uma conta --</option>
+
+        <option th:each="account : ${accounts}" th:value="${account.iban}"
+                th:text="(${
+                    (account.id_accountType == 1) ? 'Conta à Ordem' :
+                    ((account.id_accountType == 2) ? 'Conta Poupança' :
+                    ((account.id_accountType == 3) ? 'Conta Crédito' : 'Tipo de Conta Desconhecido'))
+                })">
+        </option>
+      </select>
+    </div>
+
+    <p>Selecione o montante a levantar</p>
+
+    <div class="button-grid">
+      <button type="button" class="amount-button" value="50">50</button>
+      <button type="button" class="amount-button" value="20">20</button>
+      <button type="button" class="amount-button" value="60">60</button>
+      <button type="button" class="amount-button" value="80">80</button>
+      <button type="button" class="amount-button" value="100">100</button>
+      <button type="button" class="amount-button" value="200">200</button>
+    </div>
+
+    <label for="otherAmountInput">Outros montantes</label>
+    <input type="number" class="input-other" id="otherAmountInput" name="amount" placeholder="Outros montantes" />
+
+    <div class="buttons">
+      <button type="submit" class="btn-confirmar">Confirmar</button>
+
+      <a href="/" class="btn-cancelar">Cancelar</a>
+
+    </div>
+  </form>
+
+</div>
+
+<script>
+  const otherAmountInput = document.getElementById('otherAmountInput');
+
+  const amountButtons = document.querySelectorAll('.amount-button');
+
+  amountButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      otherAmountInput.value = button.value;
+    });
+  });
+</script>
+</body>
+</html>

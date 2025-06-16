@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt">
 <head>
-    <meta charset="UTF-8" />
-    <title>Fazer Levantamentos</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <style>
+    <meta charset="UTF-8">
+    <title>Fazer Depósito</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+    <style>
         * {
             box-sizing: border-box;
             margin: 0;
@@ -13,12 +13,13 @@
         }
 
         body {
-            font-family: Tahoma, Verdana, sans-serif;
+            font-family: "Tahoma", "Verdana", sans-serif;
+            background-color: #D9D9D9;
             display: flex;
             min-height: 100vh;
-            background-color: #e5e7eb;
         }
 
+        /* Sidebar */
         .sidebar {
             width: 250px;
             background-color: white;
@@ -89,12 +90,21 @@
             color: red;
         }
 
+        /* Main overlay */
+        .main {
+            flex: 1;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .modal {
             background-color: white;
             border-radius: 12px;
-            padding: 60px;
-            width: 500px;
-            margin: auto; /* centralizar vertical e horizontal */
+            padding: 50px;
+            width: 450px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
         }
 
@@ -103,38 +113,33 @@
             font-size: 20px;
         }
 
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 20px 0;
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        .button-grid button {
-            padding: 10px;
-            font-size: 16px;
-            background-color: #e5e7eb;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
         }
 
-        .input-other {
-            width: 96%;
+        .form-group input,
+        .form-group select {
+            width: 100%;
             padding: 10px;
             background-color: #e5e7eb;
             border: none;
             border-radius: 6px;
-            margin-bottom: 50px;
         }
 
         .buttons {
             display: flex;
             justify-content: space-between;
+            margin-top: 30px;
         }
 
         .btn-confirmar {
-            background-color: #db4848;
+            background-color: #DB4848;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -151,6 +156,19 @@
             text-decoration: none;
             text-align: center;
         }
+
+        .actions-debug {
+            font-size: 12px;
+            color: #555;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .actions-debug span {
+            cursor: pointer;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -161,77 +179,62 @@
         <h3>Contas & Movimentos</h3>
         <ul>
             <li><button class="sidebar-button" onclick="window.location.href='/'">Início</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/contas'">Contas</button></li>
-            <li><button class="sidebar-button" onclick="document.getElementById('patrimonio')?.scrollIntoView({ behavior: 'smooth' })">Património</button></li>
+<!--            <li><button class="sidebar-button" onclick="document.getElementById('patrimonio')?.scrollIntoView({ behavior: 'smooth' })">Património</button></li>-->
             <li><button class="sidebar-button" onclick="window.location.href='/transferencias'">Transferências</button></li>
             <li><button class="sidebar-button" onclick="window.location.href='/levantamentos'">Levantamentos</button></li>
             <li><button class="sidebar-button" onclick="window.location.href='/depositos'">Depósitos</button></li>
         </ul>
         <h3>Área pessoal</h3>
         <ul>
-            <li>O meu perfil</li>
-            <li>Definições</li>
+            <li><button class="sidebar-button" onclick="window.location.href='/perfil'">O meu perfil</button></li>
+            <li><button class="sidebar-button" onclick="window.location.href='/definicoes'">Definições</button></li>
         </ul>
     </div>
     <div class="logout">
         <a href="/login"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a>
     </div>
 </div>
-<div class="modal">
 
-    <h2>Fazer levantamentos</h2>
+<!-- Modal Overlay Content -->
+<div class="main">
+    <div class="modal">
 
-    <form action="/levantamentos" method="post" id="withdrawForm">
+        <h2>Fazer Depósito</h2>
 
-        <div class="form-group">
-            <label for="iban">Selecionar Conta</label>
-            <select id="iban" name="iban" required>
-                <option value="">-- Selecione uma conta --</option>
+        <form action="/depositos" method="post">
 
-                <option th:each="account : ${accounts}" th:value="${account.iban}"
-                        th:text="(${
-                    (account.id_accountType == 1) ? 'Conta à Ordem' :
-                    ((account.id_accountType == 2) ? 'Conta Poupança' :
-                    ((account.id_accountType == 3) ? 'Conta Crédito' : 'Tipo de Conta Desconhecido'))
-                })">
-                </option>
-            </select>
+            <div class="form-group">
+                <label for="accountIban">Selecionar Conta</label>
+                <select id="accountIban" name="accountIban" required>
+                    <option value="">-- Selecione uma conta --</option>
+                    <option th:each="account : ${accounts}" th:value="${account.iban}"
+                            th:text="(${
+                                (account.id_accountType == 1) ? 'Conta à Ordem' :
+                                ((account.id_accountType == 2) ? 'Conta Poupança' :
+                                ((account.id_accountType == 3) ? 'Conta Crédito' : 'Tipo de Conta Desconhecido'))
+                            })">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Montante</label>
+                <input type="number" name="amount" min="0" step="0.01" required>
+            </div>
+
+            <div class="buttons">
+                <button type="submit" class="btn-confirmar">Confirmar</button>
+                <a href="/" class="btn-cancelar">Cancelar</a>
+            </div>
+
+        </form>
+
+        <div class="actions-debug">
+            <span onclick="window.location.href='/suporte'">Suporte</span>
         </div>
 
-        <p>Selecione o montante a levantar</p>
-
-        <div class="button-grid">
-            <button type="button" class="amount-button" value="50">50</button>
-            <button type="button" class="amount-button" value="20">20</button>
-            <button type="button" class="amount-button" value="60">60</button>
-            <button type="button" class="amount-button" value="80">80</button>
-            <button type="button" class="amount-button" value="100">100</button>
-            <button type="button" class="amount-button" value="200">200</button>
-        </div>
-
-        <label for="otherAmountInput">Outros montantes</label>
-        <input type="number" class="input-other" id="otherAmountInput" name="amount" placeholder="Outros montantes" />
-
-        <div class="buttons">
-            <button type="submit" class="btn-confirmar">Confirmar</button>
-
-            <a href="/" class="btn-cancelar">Cancelar</a>
-
-        </div>
-    </form>
-
+    </div>
 </div>
 
-<script>
-    const otherAmountInput = document.getElementById('otherAmountInput');
-
-    const amountButtons = document.querySelectorAll('.amount-button');
-
-    amountButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            otherAmountInput.value = button.value;
-        });
-    });
-</script>
 </body>
 </html>

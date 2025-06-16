@@ -10,7 +10,7 @@
             background-color: #D9D9D9 /* cinza claro */
         }
 
-        .container {
+        .login-container {
             max-width: 400px;
             margin: 70px auto;
             padding: 60px;
@@ -37,7 +37,7 @@
             border-radius: 4px;
         }
 
-        .btn {
+        .btn-login {
             background-color: #DB4848;
             color: white;
             padding: 10px 15px;
@@ -48,7 +48,7 @@
             height: 40px;
         }
 
-        .btn:hover {
+        .btn-login:hover {
             background-color: #ff0000;
         }
 
@@ -70,21 +70,21 @@
     </style>
 </head>
 <body>
-<div class="container">
+<div class="login-container">
     <h2>Contactar Suporte</h2>
-    <form action="/suporte" method="post">
+    <form action="/login" method="post">
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="text" id="email" name="email" maxlength="255" required>
+            <input type="text" id="email" name="email" required>
         </div>
 
         <div class="form-group">
-            <label for="description">Descrição do problema (opcional)</label>
-            <textarea id="description" name="description" rows="5" maxlength="255" required></textarea>
+            <label for="problem">Descrição do problema (opcional)</label>
+            <textarea id="problem" name="problem" rows="5" required></textarea>
         </div>
 
         <br>
-        <button type="submit" class="btn"><b>Enviar</b></button>
+        <button type="submit" class="btn-login"><b>Enviar</b></button>
 
     </form>
 </div>

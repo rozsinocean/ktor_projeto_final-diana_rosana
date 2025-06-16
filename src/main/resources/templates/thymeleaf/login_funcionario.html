@@ -15,27 +15,29 @@
             margin: 0;
         }
         .login-container {
-            max-width: 400px;
-            padding: 30px;
+            padding: 50px;
             border: 1px solid #ccc;
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
         }
         .form-group {
             margin-bottom: 20px;
+
         }
         .form-group label {
             display: block;
             margin-bottom: 5px;
         }
         .form-group input {
-            width: 100%;
+            width: 400px;
             padding: 10px;
             border: 1px solid #D9D9D9;
             background-color: #F9F9F9;
             border-radius: 5px;
             font-size: 14px;
+
         }
         .btn-login {
             background-color: #DB4848;
@@ -104,18 +106,20 @@
 </head>
 <body>
 <div class="login-container">
-    <h2>Login de funcionário</h2>
+    <h2>Bem-vindo(a) - Faça seu login</h2>
+    <!-- Login form -->
     <form id="loginForm" onsubmit="handleLogin(event);">
         <div class="form-group">
-            <label for="id">Id</label>
-            <input type="id" id="id" name="id" required placeholder="Digite seu id de funcionario">
+            <label for="id">Id de Funcionário</label>
+            <input type="id" id="id" name="id" required placeholder="Digite o seu id de funcionário">
         </div>
 
         <div class="form-group">
             <label for="password">Palavra-Passe</label>
-            <input type="password" id="password" name="password" required placeholder="Digite sua senha">
+            <input type="password" id="password" name="password" required placeholder="Digite a sua senha">
         </div>
 
+        <!-- Error message display -->
         <div id="error-message" class="error-message"></div>
 
         <button type="submit" class="btn-login">Entrar</button>

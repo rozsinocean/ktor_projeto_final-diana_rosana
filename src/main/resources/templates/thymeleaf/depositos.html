@@ -173,25 +173,29 @@
 </head>
 <body>
 
-<!-- Sidebar -->
+<!-- Barra lateral -->
 <div class="sidebar">
     <div>
         <h3>Contas & Movimentos</h3>
         <ul>
-            <li><button class="sidebar-button" onclick="window.location.href='/'">Início</button></li>
-            <!--            <li><button class="sidebar-button" onclick="document.getElementById('patrimonio')?.scrollIntoView({ behavior: 'smooth' })">Património</button></li>-->
-            <li><button class="sidebar-button" onclick="window.location.href='/transferencias'">Transferências</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/levantamentos'">Levantamentos</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/depositos'">Depósitos</button></li>
+            <li><a href="/">Início</a></li>
+            <li><a href="/levantamentos">Levantamentos</a></li>
+            <li><a href="/transferencias">Transferências</a></li>
+            <li><a href="/depositos">Depósitos</a></li>
         </ul>
+
         <h3>Área pessoal</h3>
         <ul>
-            <li><button class="sidebar-button" onclick="window.location.href='/perfil'">O meu perfil</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/definicoes'">Definições</button></li>
+            <li><a href="/omeuperfil">O meu perfil</a></li>
+
         </ul>
-    </div>
-    <div class="logout">
-        <a href="/login"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a>
+
+        <div class="logout">
+            <a href="/login">
+                <i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão
+            </a>
+        </div>
+
     </div>
 </div>
 

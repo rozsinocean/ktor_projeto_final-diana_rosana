@@ -22,76 +22,7 @@
             min-height: 100vh;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background-color: white;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
 
-        .sidebar h3 {
-            margin: 16px 0 8px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            margin-bottom: 20px;
-        }
-
-        .sidebar li {
-            margin: 10px 0;
-            font-size: 16px;
-        }
-
-        .sidebar li:first-child {
-            color: red;
-            font-weight: bold;
-        }
-
-        .sidebar-button {
-            background: none;
-            border: none;
-            color: inherit;
-            font: inherit;
-            text-align: left;
-            padding: 5px 0;
-            cursor: pointer;
-        }
-
-        .sidebar-button:hover {
-            text-decoration: underline;
-        }
-
-        .logout {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
-
-        .logout a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: inherit;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 10px 0;
-        }
-
-        .logout a:hover {
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        .logout i {
-            color: red;
-        }
         /* Login Container */
         .main {
             flex: 1;
@@ -198,28 +129,7 @@
 </head>
 <body>
 
-<!-- Sidebar -->
-<div class="sidebar">
-    <div>
-        <h3>Contas & Movimentos</h3>
-        <ul>
-            <li><button class="sidebar-button" onclick="window.location.href='/'">Início</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/'">Contas</button></li>
-            <li><button class="sidebar-button" onclick="document.getElementById('patrimonio')?.scrollIntoView({ behavior: 'smooth' })">Património</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/transferencias'">Transferências</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/levantamentos'">Levantamentos</button></li>
-            <li><button class="sidebar-button" onclick="window.location.href='/depositos'">Depósitos</button></li>
-        </ul>
-        <h3>Área pessoal</h3>
-        <ul>
-            <li>O meu perfil</li>
-            <li>Definições</li>
-        </ul>
-    </div>
-    <div class="logout">
-        <a href="/login"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a>
-    </div>
-</div>
+
 
 <!-- Login form -->
 <div class="main">

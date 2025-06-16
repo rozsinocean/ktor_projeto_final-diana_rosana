@@ -182,29 +182,24 @@
 <!-- Página Principal - Parte central -->
 <div class="main">
     <div class="header">
-        <h1>Bem-vindo, Funcionário!</h1>
+        <h1 th:text="'Bem-vindo, ' + ${person.name}">Bem-vindo, [Nome do Usuário]</h1>
         <p>Último login: 14/06/2025 às 10:42</p>
-    </div>
 
     <!-- Cartões bonitos e interativos -->
     <div class="cards">
         <div class="card">
             <h3>Total de Clientes</h3>
-            <p>2456</p>
-        </div>
+            <p th:text="${numberOfClients}">2456</p> </div>
         <div class="card">
             <h3>Contas Ativas</h3>
-            <p></p>
-        </div>
+            <p th:text="${numberOfAccounts}"></p> </div>
         <div class="card">
             <h3>Transferências Pendentes</h3>
-            <p></p>
-            <a href="#" class="button">Ver todas</a>
+            <p></p> <a href="#" class="button">Ver todas</a>
         </div>
         <div class="card">
             <h3>Novos Registos Hoje</h3>
-            <p></p>
-        </div>
+            <p></p> </div>
     </div>
 
     <!-- Mais botões -->

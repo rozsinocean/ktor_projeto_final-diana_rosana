@@ -54,12 +54,14 @@ fun Application.configureSecurity() {
             validate { credential ->
                 val email = credential.payload.getClaim("email").asString()
                 val expiration = credential.expiresAt?.after(Date()) ?: false
+                val userType = credential.payload.getClaim("type").asString()
 
-                if (email != null && expiration) {
-                    application.log.info("Token validated successfully for email: $email")
+
+                if (email != null && expiration && userType != null) {
+                    application.log.info("Token validated successfully for email: $email as $userType")
                     JWTPrincipal(credential.payload)
                 } else {
-                    application.log.warn("JWT validation failed: email=$email, expiration=$expiration")
+                    application.log.warn("JWT validation failed: email=$email, expiration=$expiration as $userType")
                     null
                 }
             }

@@ -7,13 +7,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class PersonRepository : PersonInterface {
     override fun allPerson(): List<Person> = transaction {
         PersonTable.selectAll().map {
-            it.toPerson() // Use the toPerson extension function
+            it.toPerson()
         }
     }
 
     override fun getPersonById(id: Int): Person? = transaction {
         PersonTable.select { PersonTable.id eq id }.map {
-            it.toPerson() // Use the toPerson extension function
+            it.toPerson()
         }.singleOrNull()
     }
 
@@ -56,6 +56,12 @@ class PersonRepository : PersonInterface {
     override fun findByEmail(email: String): Person? = transaction {
         PersonTable.select {
             PersonTable.email eq email
-        }.map { it.toPerson() }.singleOrNull() // Returns null if no person is found
+        }.map { it.toPerson() }.singleOrNull()
+    }
+
+    fun findById(id: Int): Person? = transaction {
+        PersonTable.select {
+            PersonTable.id eq id
+        }.map { it.toPerson() }.singleOrNull()
     }
 }

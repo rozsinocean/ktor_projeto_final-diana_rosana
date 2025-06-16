@@ -27,7 +27,7 @@ fun Application.configureTemplating() {
             prefix = "templates/thymeleaf/"
             suffix = ".html"
             characterEncoding = "utf-8"
-            checkExistence = true // Isso vai ajudar a debugar
+            checkExistence = true
         })
     }
 
@@ -43,15 +43,7 @@ fun Application.configureTemplating() {
         }
 
         get("/login") {
-            logger.info("Tentar mostrar página de login")
             try {
-                val resource = this::class.java.classLoader.getResource("templates/thymeleaf/login.html")
-                if (resource == null) {
-                    logger.error("Arquivo login.html não encontrado!")
-                    call.respondText("Template não encontrado", status = HttpStatusCode.NotFound)
-                    return@get
-                }
-
                 logger.info("Template login.html encontrado, tentando renderizar")
                 call.respond(ThymeleafContent("login", mapOf()))
             } catch (e: Exception) {
@@ -60,13 +52,13 @@ fun Application.configureTemplating() {
             }
         }
 
-        get("/registo_cliente") {
+        get("/login_funcionario") {
             try {
-                logger.info("Tentar renderizar o template Registo de Cliente Novo")
-                call.respond(ThymeleafContent("registo_cliente", mapOf()))
+                logger.info("Template login.html encontrado, tentando renderizar")
+                call.respond(ThymeleafContent("login_funcionario", mapOf()))
             } catch (e: Exception) {
-                logger.error("Erro ao renderizar template: ${e.message}", e)
-                call.respondText("Erro ao carregar o template: ${e.message}")
+                logger.error("Erro ao renderizar login: ${e.message}", e)
+                call.respondText("Erro: ${e.message}")
             }
         }
 
@@ -74,8 +66,9 @@ fun Application.configureTemplating() {
             get("/") {
                 val principal = call.principal<JWTPrincipal>()
                 val email = principal?.getClaim("email", String::class)
+                val userType = principal?.getClaim("type", String::class)
 
-                if (email == null) {
+                if (email == null || userType == null) {
                     call.respondRedirect("/login")
                     return@get
                 }
@@ -88,39 +81,51 @@ fun Application.configureTemplating() {
                         return@get
                     }
 
-                    val client = clientRepository.findByPersonId(person.id!!)
+                    if (userType == "client") {
+                        val client = clientRepository.findByPersonId(person.id!!)
 
-                    val accounts = client?.id?.let { clientId ->
-                        accountRepository.getAccountsByPrimaryHolder(clientId)
-                    } ?: emptyList()
+                        val accounts = client?.id?.let { clientId ->
+                            accountRepository.getAccountsByPrimaryHolder(clientId)
+                        } ?: emptyList()
 
-                    val userTransactions = mutableSetOf<Transaction>()
-                    val userAccountIds = accounts.mapNotNull { it.id_account }
+                        val userTransactions = mutableSetOf<Transaction>()
+                        val userAccountIds = accounts.map { it.id_account }
 
-                    for (accountId in userAccountIds) {
-                        userTransactions.addAll(transactionRepository.getTransactionsBySourceAccount(accountId))
-                        userTransactions.addAll(transactionRepository.getTransactionsByDestinationAccount(accountId))
+                        for (accountId in userAccountIds) {
+                            userTransactions.addAll(transactionRepository.getTransactionsBySourceAccount(accountId))
+                            userTransactions.addAll(transactionRepository.getTransactionsByDestinationAccount(accountId))
+                        }
+
+                        val allUserTransactions = userTransactions.toList()
+
+                        val allAccountTypes = accountTypeRepository.allAccountTypes()
+                        val accountTypeNamesById = allAccountTypes.associateBy { it.id }.mapValues { it.value.name }
+
+
+                        val data = mutableMapOf<String, Any>(
+                            "userEmail" to email,
+                            "person" to person,
+                            "accounts" to accounts,
+                            "transactions" to allUserTransactions,
+                            "accountTypes" to accountTypeNamesById,
+                        )
+
+                        if (client != null) {
+                            data["client"] = client
+                        }
+
+                        call.respond(ThymeleafContent("index", data.toMap()))
+                    } else if (userType == "employee") {
+                        val numberOfAccounts = accountRepository.allAccounts().size
+                        val numberOfClients = clientRepository.allClients().size
+
+                        val data = mutableMapOf<String, Any>(
+                            "person" to person,
+                            "numberOfAccounts" to numberOfAccounts,
+                            "numberOfClients" to numberOfClients,
+                        )
+                        call.respond(ThymeleafContent("dashboard_funcionario", data.toMap()))
                     }
-
-                    val allUserTransactions = userTransactions.toList()
-
-                    val allAccountTypes = accountTypeRepository.allAccountTypes()
-                    val accountTypeNamesById = allAccountTypes.associateBy { it.id }.mapValues { it.value.name }
-
-
-                    val data = mutableMapOf<String, Any>(
-                        "userEmail" to email,
-                        "person" to person,
-                        "accounts" to accounts,
-                        "transactions" to allUserTransactions,
-                        "accountTypes" to accountTypeNamesById,
-                    )
-
-                    if (client != null) {
-                        data["client"] = client
-                    }
-
-                    call.respond(ThymeleafContent("index", data.toMap()))
 
                 } catch (e: Exception) {
                     application.log.error("Erro ao carregar a página principal:", e)
@@ -228,10 +233,10 @@ fun Application.configureTemplating() {
                 }
             }
 
-            get("/pin_multibanco") {
+            get("/registo_cliente") {
                 try {
-                    logger.info("Tentar renderizar o template pin_multibanco")
-                    call.respond(ThymeleafContent("pin_multibanco", mapOf()))
+                    logger.info("Tentar renderizar o template Registo de Cliente Novo")
+                    call.respond(ThymeleafContent("registo_cliente", mapOf()))
                 } catch (e: Exception) {
                     logger.error("Erro ao renderizar template: ${e.message}", e)
                     call.respondText("Erro ao carregar o template: ${e.message}")

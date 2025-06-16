@@ -7,8 +7,10 @@ import com.rosana_diana.account.AccountRepository
 import com.rosana_diana.accounttype.AccountTypeRepository
 import com.rosana_diana.client.Client
 import com.rosana_diana.client.ClientRepository
+import com.rosana_diana.employee.EmployeeRepository
 import com.rosana_diana.person.Person
 import com.rosana_diana.person.PersonRepository
+import com.rosana_diana.person.PersonTable.email
 import com.rosana_diana.transaction.TransactionRepository
 import com.rosana_diana.transaction.TransactionService
 import com.rosana_diana.transactiontype.TransactionTypeRepository
@@ -26,6 +28,7 @@ import java.util.Date
 fun Application.configureRouting() {
     val personRepository = PersonRepository()
     val clientRepository = ClientRepository()
+    val employeeRepository = EmployeeRepository()
     val accountRepository = AccountRepository()
     val transactionRepository = TransactionRepository()
     val accountTypeRepository = AccountTypeRepository()
@@ -219,6 +222,7 @@ fun Application.configureRouting() {
                     .withIssuer(environment.config.property("jwt.domain").getString())
                     .withClaim("email", person.email)
                     .withClaim("nif", person.nif)
+                    .withClaim("type", "client")
                     .withExpiresAt(Date(System.currentTimeMillis() + 60 * 60 * 1000)) // Token expira em 1 hora
                     .sign(Algorithm.HMAC256(environment.config.property("jwt.secret").getString()))
 
@@ -232,21 +236,75 @@ fun Application.configureRouting() {
                         maxAge = 60 * 60
                     )
                 )
+
+                call.respond(HttpStatusCode.OK)
             } catch (e: Exception) {
                 application.log.error("Erro durante o processo de login:", e)
                 call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado durante o login.")
             }
         }
 
+        post("/login_funcionario") {
+            val params = call.receiveParameters()
+            val id = params["id"]?.toInt()
+            val password = params["password"] ?: ""
+
+            try {
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Dados nulos!")
+                    return@post
+                }
+
+                val employee = employeeRepository.getEmployeeById(id)
+                val person = employee?.let { personRepository.findById(it.personId) }
+
+                if (employee == null || employee.id != id || !BCrypt.checkpw(password, person?.password)) {
+                    application.log.warn("Senha inválida para o funcionário: $id")
+                    call.respond(HttpStatusCode.Unauthorized, "Email, senha ou NIF inválidos.")
+                    return@post
+                }
+
+                application.log.info("Login bem-sucedido para o funcionário: $id")
+
+                val token = JWT.create()
+                    .withAudience(environment.config.property("jwt.audience").getString())
+                    .withIssuer(environment.config.property("jwt.domain").getString())
+                    .withClaim("email", person?.email)
+                    .withClaim("nif", person?.nif)
+                    .withClaim("type", "employee")
+                    .withExpiresAt(Date(System.currentTimeMillis() + 60 * 60 * 1000)) // Token expira em 1 hora
+                    .sign(Algorithm.HMAC256(environment.config.property("jwt.secret").getString()))
+
+                call.response.cookies.append(
+                    Cookie(
+                        name = "jwt_token",
+                        value = token,
+                        httpOnly = true,
+                        secure = false,
+                        path = "/",
+                        maxAge = 60 * 60
+                    )
+                )
+
+                call.respond(HttpStatusCode.OK)
+            } catch (e: Exception) {
+                application.log.error("Erro durante o processo de login:", e)
+                call.respond(HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado durante o login.")
+            }
+        }
 
         post("/logout") {
             call.response.cookies.append(
                 Cookie(
                     name = "jwt_token",
                     value = "",
-                    maxAge = 0
+                    maxAge = 0,
+                    path = "/",
+                    httpOnly = true,
+                    secure = true
                 )
             )
+
             call.respondRedirect("/login")
         }
     }

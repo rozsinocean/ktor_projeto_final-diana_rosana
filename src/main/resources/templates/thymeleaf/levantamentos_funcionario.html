@@ -189,17 +189,7 @@
 
     <div class="form-group">
       <label for="iban">Selecionar Conta</label>
-      <select id="iban" name="iban" required>
-        <option value="">-- Selecione uma conta --</option>
-
-        <option th:each="account : ${accounts}" th:value="${account.iban}"
-                th:text="(${
-                    (account.id_accountType == 1) ? 'Conta à Ordem' :
-                    ((account.id_accountType == 2) ? 'Conta Poupança' :
-                    ((account.id_accountType == 3) ? 'Conta Crédito' : 'Tipo de Conta Desconhecido'))
-                })">
-        </option>
-      </select>
+      <input type="text" id="iban" name="iban" required>
     </div>
 
     <p>Selecione o montante a levantar</p>
